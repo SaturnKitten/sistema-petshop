@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login • Caixa PetShop</title>
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <main class="container">
+    <nav class="navbar" aria-label="Barra de navegação">
+      <div class="brand"><img src="assets/img/logo.svg" alt="Logo"> Caixa PetShop</div>
+      <div class="nav-spacer"></div>
+    </nav>
+
+    <section class="grid" style="margin-top: 32px;">
+      <div class="card" style="max-width: 420px; margin: 0 auto;">
+        <h2>Acesse sua conta</h2>
+        <p class="muted">Entre com suas credenciais para continuar.</p>
+        <form id="frmLogin" autocomplete="on">
+          <label for="username">Usuário</label>
+          <input id="username" name="username" class="input" required aria-required="true" />
+
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" class="input" required aria-required="true" />
+
+          <div style="display:flex; gap:10px; margin-top:14px;">
+            <button class="btn" type="submit">Entrar</button>
+            <button class="btn ghost" type="button" id="btnCfg">Configurar Back-End</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <div class="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script>
+    document.querySelector('#frmLogin').addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      const username = document.querySelector('#username').value.trim();
+      const password = document.querySelector('#password').value.trim();
+      try{
+        const resp = await Endpoints.auth.login({ username, password });
+        if(!resp.auth){ toast(resp.message||'Credenciais inválidas.'); return; }
+        localStorage.setItem('token', resp.token);
+        setUserName(username);
+        location.href = 'index.html';
+      }catch(e){ toast('Falha na autenticação.'); }
+    });
+
+    document.querySelector('#btnCfg').addEventListener('click', ()=>{
+      const url = prompt('URL do Back-End (ex.: http://localhost:40000)', localStorage.getItem('BASE_URL')||'http://localhost:40000');
+      if(url){ localStorage.setItem('BASE_URL', url); toast('Back-End configurado.'); }
+    });
+  </script>
+</body>
+</html>
