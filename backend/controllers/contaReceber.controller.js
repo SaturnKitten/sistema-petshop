@@ -1,51 +1,71 @@
-const ContaReceber = require('../models/contaReceber.model');
+const db = require('../config/db.config');
 
 exports.getAllContasReceber = async (req, res) => {
-    try {
-        const contas = await ContaReceber.getAll();
-        res.status(200).json({ success: true, data: contas });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao buscar contas a receber', error: error.message });
-    }
+  try {
+    const { rows } = await db.query(`
+      SELECT cr.ID, cr.Descricao, cr.DataLancamento, cr.Valor, cr.Status, cr.ID_Cliente, c.Nome AS NomeCliente
+      FROM ContaReceber cr
+      JOIN Cliente c ON cr.ID_Cliente = c.ID
+      WHERE cr.Removido = FALSE AND c.Removido = FALSE
+      ORDER BY cr.DataLancamento DESC
+    `);
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.getContaReceberById = async (req, res) => {
-    try {
-        const conta = await ContaReceber.getById(req.params.id);
-        if (!conta) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
-        res.status(200).json({ success: true, data: conta });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao buscar conta', error: error.message });
-    }
+  try {
+    const { rows } = await db.query(`
+      SELECT cr.ID, cr.Descricao, cr.DataLancamento, cr.Valor, cr.Status, cr.ID_Cliente, c.Nome AS NomeCliente
+      FROM ContaReceber cr
+      JOIN Cliente c ON cr.ID_Cliente = c.ID
+      WHERE cr.ID = $1 AND cr.Removido = FALSE
+    `, [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Conta a receber não encontrada" });
+    res.json({ success: true, data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.createContaReceber = async (req, res) => {
-    const { Descricao, DataLancamento, Valor, ID_Cliente } = req.body;
-    try {
-        const result = await ContaReceber.create({ Descricao, DataLancamento, Valor, ID_Cliente });
-        res.status(201).json({ success: true, message: 'Conta criada com sucesso', data: { id: result.id } });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao criar conta', error: error.message });
-    }
+  const { Descricao, DataLancamento, Valor, ID_Cliente } = req.body;
+  try {
+    const { rows } = await db.query(`
+      INSERT INTO ContaReceber (Descricao, DataLancamento, Valor, Status, ID_Cliente)
+      VALUES ($1, $2, $3, 'PENDENTE', $4)
+      RETURNING *
+    `, [Descricao, DataLancamento, Valor, ID_Cliente]);
+    res.status(201).json({ success: true, data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.updateContaReceber = async (req, res) => {
-    const { Descricao, DataLancamento, Valor, Status } = req.body;
-    try {
-        const result = await ContaReceber.update({ ID: req.params.id, Descricao, DataLancamento, Valor, Status });
-        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
-        res.status(200).json({ success: true, message: 'Conta atualizada com sucesso' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao atualizar conta', error: error.message });
-    }
+  const { Descricao, DataLancamento, Valor, Status } = req.body;
+  try {
+    const { rows } = await db.query(`
+      UPDATE ContaReceber
+      SET Descricao = $1, DataLancamento = $2, Valor = $3, Status = $4
+      WHERE ID = $5 AND Removido = FALSE
+      RETURNING *
+    `, [Descricao, DataLancamento, Valor, Status, req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Conta não encontrada" });
+    res.json({ success: true, message: "Conta atualizada com sucesso", data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.deleteContaReceber = async (req, res) => {
-    try {
-        const result = await ContaReceber.delete(req.params.id);
-        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
-        res.status(200).json({ success: true, message: 'Conta removida com sucesso' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao remover conta', error: error.message });
-    }
+  try {
+    const { rows } = await db.query("UPDATE ContaReceber SET Removido = TRUE WHERE ID = $1 RETURNING *", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Conta não encontrada" });
+    res.json({ success: true, message: "Conta removida com sucesso", data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
