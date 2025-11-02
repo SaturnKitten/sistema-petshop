@@ -1,51 +1,57 @@
-const Cliente = require('../models/cliente.model');
+const db = require('../config/db.config');
 
 exports.getAllClientes = async (req, res) => {
-    try {
-        const clientes = await Cliente.getAll();
-        res.status(200).json({ success: true, data: clientes });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao buscar clientes', error: error.message });
-    }
+  try {
+    const { rows } = await db.query("SELECT * FROM Cliente WHERE Removido = FALSE ORDER BY Nome");
+    res.json({ success: true, data: rows });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.getClienteById = async (req, res) => {
-    try {
-        const cliente = await Cliente.getById(req.params.id);
-        if (!cliente) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
-        res.status(200).json({ success: true, data: cliente });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao buscar cliente', error: error.message });
-    }
+  try {
+    const { rows } = await db.query("SELECT * FROM Cliente WHERE ID = $1 AND Removido = FALSE", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+    res.json({ success: true, data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.createCliente = async (req, res) => {
-    const { Nome, Telefone, Email } = req.body;
-    try {
-        const result = await Cliente.create({ Nome, Telefone, Email });
-        res.status(201).json({ success: true, message: 'Cliente criado com sucesso', data: { id: result.id } });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao criar cliente', error: error.message });
-    }
+  const { Nome, Telefone, Email } = req.body;
+  try {
+    const { rows } = await db.query(
+      "INSERT INTO Cliente (Nome, Telefone, Email, DataCadastro) VALUES ($1, $2, $3, CURRENT_DATE) RETURNING *",
+      [Nome, Telefone, Email]
+    );
+    res.status(201).json({ success: true, data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.updateCliente = async (req, res) => {
-    const { Nome, Telefone, Email } = req.body;
-    try {
-        const result = await Cliente.update({ ID: req.params.id, Nome, Telefone, Email });
-        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
-        res.status(200).json({ success: true, message: 'Cliente atualizado com sucesso' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao atualizar cliente', error: error.message });
-    }
+  const { Nome, Telefone, Email } = req.body;
+  try {
+    const { rows } = await db.query(
+      "UPDATE Cliente SET Nome = $1, Telefone = $2, Email = $3 WHERE ID = $4 AND Removido = FALSE RETURNING *",
+      [Nome, Telefone, Email, req.params.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+    res.json({ success: true, message: "Cliente atualizado com sucesso", data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.deleteCliente = async (req, res) => {
-    try {
-        const result = await Cliente.delete(req.params.id);
-        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
-        res.status(200).json({ success: true, message: 'Cliente removido com sucesso' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Erro ao remover cliente', error: error.message });
-    }
+  try {
+    const { rows } = await db.query("UPDATE Cliente SET Removido = TRUE WHERE ID = $1 RETURNING *", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+    res.json({ success: true, message: "Cliente removido com sucesso", data: rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
