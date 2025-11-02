@@ -1,73 +1,54 @@
-const db = require('../config/db.config');
-const { validationResult } = require('express-validator');
+const Recebimento = require('../models/recebimento.model');
 
-// GET /funcionarios
-exports.getAllFuncionarios = async (req, res, next) => {
+exports.getAllRecebimentos = async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT * FROM Funcionario WHERE Removido = FALSE");
-        res.json({ success: true, data: rows });
+        const rows = await Recebimento.getAll();
+        res.status(200).json(rows);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar recebimentos", error: error.message });
     }
 };
 
-// GET /funcionarios/:id
-exports.getFuncionarioById = async (req, res, next) => {
+exports.getRecebimentoById = async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT * FROM Funcionario WHERE ID = ? AND Removido = FALSE", [req.params.id]);
-        if (rows.length === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.json({ success: true, data: rows[0] });
+        const recebimento = await Recebimento.getById(req.params.id);
+        if (!recebimento) return res.status(404).json({ message: "Recebimento não encontrado" });
+        res.status(200).json(recebimento);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar recebimento", error: error.message });
     }
 };
 
-// POST /funcionarios
-exports.createFuncionario = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+exports.createRecebimento = async (req, res) => {
+    const { Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
+    if (!Descricao || !ID_ContaReceber || !ValorRecebido)
+        return res.status(400).json({ message: "Descrição, ID_ContaReceber e ValorRecebido são obrigatórios" });
 
-        const { Nome, Cargo, DataContratacao, Salario } = req.body;
-        const [result] = await db.query(
-            "INSERT INTO Funcionario (Nome, Cargo, DataContratacao, Salario) VALUES (?, ?, ?, ?)",
-            [Nome, Cargo, DataContratacao, Salario]
-        );
-        res.status(201).json({
-            success: true,
-            message: "Funcionário criado com sucesso",
-            data: { id: result.insertId, Nome, Cargo, DataContratacao, Salario }
-        });
+    try {
+        const result = await Recebimento.create({ Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento });
+        res.status(201).json({ message: "Recebimento criado com sucesso", id: result.id });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao criar recebimento", error: error.message });
     }
 };
 
-// PUT /funcionarios/:id
-exports.updateFuncionario = async (req, res, next) => {
+exports.updateRecebimento = async (req, res) => {
+    const { Descricao, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Nome, Cargo, DataContratacao, Salario } = req.body;
-        const [result] = await db.query(
-            "UPDATE Funcionario SET Nome = ?, Cargo = ?, DataContratacao = ?, Salario = ? WHERE ID = ? AND Removido = FALSE",
-            [Nome, Cargo, DataContratacao, Salario, req.params.id]
-        );
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.json({ success: true, message: "Funcionário atualizado com sucesso" });
+        const result = await Recebimento.update({ Descricao, DataRecebimento, ValorRecebido, MetodoPagamento, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Recebimento não encontrado" });
+        res.status(200).json({ message: "Recebimento atualizado com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao atualizar recebimento", error: error.message });
     }
 };
 
-// DELETE /funcionarios/:id
-exports.deleteFuncionario = async (req, res, next) => {
+exports.deleteRecebimento = async (req, res) => {
     try {
-        const [result] = await db.query("UPDATE Funcionario SET Removido = TRUE WHERE ID = ?", [req.params.id]);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.json({ success: true, message: "Funcionário removido com sucesso" });
+        const result = await Recebimento.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Recebimento não encontrado" });
+        res.status(200).json({ message: "Recebimento removido com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao remover recebimento", error: error.message });
     }
 };

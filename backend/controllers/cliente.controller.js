@@ -1,82 +1,55 @@
-const db = require('../config/db.config');
-const { validationResult } = require('express-validator');
+const Cliente = require('../models/cliente.model');
 
-// GET /clientes
-exports.getAllClientes = async (req, res, next) => {
+exports.getAllClientes = async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT * FROM Cliente WHERE Removido = FALSE");
-        res.json({ success: true, data: rows });
+        const [rows] = await Cliente.getAll();
+        res.status(200).json(rows);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar clientes", error: error.message });
     }
 };
 
-// GET /clientes/:id
-exports.getClienteById = async (req, res, next) => {
+exports.getClienteById = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            "SELECT * FROM Cliente WHERE ID = ? AND Removido = FALSE",
-            [req.params.id]
-        );
-        if (rows.length === 0)
-            return res.status(404).json({ success: false, message: "Cliente não encontrado" });
-        res.json({ success: true, data: rows[0] });
+        const [rows] = await Cliente.getById(req.params.id);
+        if (rows.length === 0) return res.status(404).json({ message: "Cliente não encontrado" });
+        res.status(200).json(rows[0]);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar cliente", error: error.message });
     }
 };
 
-// POST /clientes
-exports.createCliente = async (req, res, next) => {
-    try {
-        // Validação do express-validator
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+exports.createCliente = async (req, res) => {
+    const { Nome, Telefone, Email } = req.body;
+    if (!Nome) return res.status(400).json({ message: "Nome é obrigatório" });
 
-        const { Nome, Telefone, Email } = req.body;
-        const [result] = await db.query(
-            "INSERT INTO Cliente (Nome, Telefone, Email, DataCadastro) VALUES (?, ?, ?, CURDATE())",
-            [Nome, Telefone, Email]
-        );
-        res.status(201).json({
-            success: true,
-            message: "Cliente criado com sucesso",
-            data: { id: result.insertId, Nome, Telefone, Email }
-        });
+    try {
+        const [result] = await Cliente.create({ Nome, Telefone, Email });
+        res.status(201).json({ message: "Cliente criado com sucesso", id: result.insertId });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao criar cliente", error: error.message });
     }
 };
 
-// PUT /clientes/:id
-exports.updateCliente = async (req, res, next) => {
+exports.updateCliente = async (req, res) => {
+    const { Nome, Telefone, Email } = req.body;
+    if (!Nome) return res.status(400).json({ message: "Nome é obrigatório" });
+
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Nome, Telefone, Email } = req.body;
-        const [result] = await db.query(
-            "UPDATE Cliente SET Nome = ?, Telefone = ?, Email = ? WHERE ID = ? AND Removido = FALSE",
-            [Nome, Telefone, Email, ID]
-        );
-        if (result.affectedRows === 0)
-            return res.status(404).json({ success: false, message: "Cliente não encontrado" });
-
-        res.json({ success: true, message: "Cliente atualizado com sucesso" });
+        const [result] = await Cliente.update({ Nome, Telefone, Email, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente não encontrado" });
+        res.status(200).json({ message: "Cliente atualizado com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao atualizar cliente", error: error.message });
     }
 };
 
-// DELETE /clientes/:id
-exports.deleteCliente = async (req, res, next) => {
+exports.deleteCliente = async (req, res) => {
     try {
-        const [result] = await db.query("UPDATE Cliente SET Removido = TRUE WHERE ID = ?", [req.params.id]);
-        if (result.affectedRows === 0)
-            return res.status(404).json({ success: false, message: "Cliente não encontrado" });
-
-        res.json({ success: true, message: "Cliente removido com sucesso" });
+        const [result] = await Cliente.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente não encontrado" });
+        res.status(200).json({ message: "Cliente removido com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao remover cliente", error: error.message });
     }
 };

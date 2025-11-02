@@ -1,86 +1,57 @@
-const db = require('../config/db.config');
-const { validationResult } = require('express-validator');
+const Animal = require('../models/animal.model');
 
-// GET /animais
-exports.getAllAnimals = async (req, res, next) => {
+exports.getAllAnimals = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            `SELECT a.ID, a.Nome, a.Especie, a.Raca, a.DataNascimento, c.Nome AS NomeCliente
-             FROM Animal a
-             JOIN Cliente c ON a.ID_Cliente = c.ID
-             WHERE a.Removido = FALSE AND c.Removido = FALSE`
-        );
-        res.json({ success: true, data: rows });
+        const rows = await Animal.getAll();
+        res.status(200).json(rows);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar animais", error: error.message });
     }
 };
 
-// GET /animais/:id
-exports.getAnimalById = async (req, res, next) => {
+exports.getAnimalById = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            `SELECT a.ID, a.Nome, a.Especie, a.Raca, a.DataNascimento, c.Nome AS NomeCliente
-             FROM Animal a
-             JOIN Cliente c ON a.ID_Cliente = c.ID
-             WHERE a.ID = ? AND a.Removido = FALSE`,
-            [req.params.id]
-        );
-        if (rows.length === 0) return res.status(404).json({ success: false, message: "Animal não encontrado" });
-        res.json({ success: true, data: rows[0] });
+        const animal = await Animal.getById(req.params.id);
+        if (!animal) return res.status(404).json({ message: "Animal não encontrado" });
+        res.status(200).json(animal);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar animal", error: error.message });
     }
 };
 
-// POST /animais
-exports.createAnimal = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+exports.createAnimal = async (req, res) => {
+    const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
+    if (!Nome || !Especie || !ID_Cliente)
+        return res.status(400).json({ message: "Nome, Espécie e ID_Cliente são obrigatórios" });
 
-        const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
-        const [result] = await db.query(
-            `INSERT INTO Animal (Nome, Especie, Raca, DataNascimento, ID_Cliente)
-             VALUES (?, ?, ?, ?, ?)`,
-            [Nome, Especie, Raca, DataNascimento, ID_Cliente]
-        );
-        res.status(201).json({
-            success: true,
-            message: "Animal criado com sucesso",
-            data: { id: result.insertId, Nome, Especie, Raca, DataNascimento, ID_Cliente }
-        });
+    try {
+        const result = await Animal.create({ Nome, Especie, Raca, DataNascimento, ID_Cliente });
+        res.status(201).json({ message: "Animal criado com sucesso", id: result.id });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao criar animal", error: error.message });
     }
 };
 
-// PUT /animais/:id
-exports.updateAnimal = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+exports.updateAnimal = async (req, res) => {
+    const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
+    if (!Nome || !Especie)
+        return res.status(400).json({ message: "Nome e Espécie são obrigatórios" });
 
-        const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
-        const [result] = await db.query(
-            `UPDATE Animal SET Nome = ?, Especie = ?, Raca = ?, DataNascimento = ?, ID_Cliente = ?
-             WHERE ID = ? AND Removido = FALSE`,
-            [Nome, Especie, Raca, DataNascimento, ID_Cliente, req.params.id]
-        );
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Animal não encontrado" });
-        res.json({ success: true, message: "Animal atualizado com sucesso" });
+    try {
+        const result = await Animal.update({ Nome, Especie, Raca, DataNascimento, ID_Cliente, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Animal não encontrado" });
+        res.status(200).json({ message: "Animal atualizado com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao atualizar animal", error: error.message });
     }
 };
 
-// DELETE /animais/:id
-exports.deleteAnimal = async (req, res, next) => {
+exports.deleteAnimal = async (req, res) => {
     try {
-        const [result] = await db.query("UPDATE Animal SET Removido = TRUE WHERE ID = ?", [req.params.id]);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Animal não encontrado" });
-        res.json({ success: true, message: "Animal removido com sucesso" });
+        const result = await Animal.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Animal não encontrado" });
+        res.status(200).json({ message: "Animal removido com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao remover animal", error: error.message });
     }
 };

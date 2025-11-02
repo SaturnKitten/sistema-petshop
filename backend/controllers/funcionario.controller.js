@@ -1,86 +1,53 @@
-const db = require('../config/db.config');
-const { validationResult } = require('express-validator');
+const Funcionario = require('../models/funcionario.model');
 
-// GET /recebimentos
-exports.getAllRecebimentos = async (req, res, next) => {
+exports.getAllFuncionario = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            `SELECT r.*, cr.Descricao AS ContaDescricao
-             FROM Recebimento r
-             JOIN ContaReceber cr ON r.ID_ContaReceber = cr.ID
-             WHERE r.Removido = FALSE AND cr.Removido = FALSE`
-        );
-        res.json({ success: true, data: rows });
+        const rows = await Funcionario.getAll();
+        res.status(200).json(rows);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar funcionários", error: error.message });
     }
 };
 
-// GET /recebimentos/:id
-exports.getRecebimentoById = async (req, res, next) => {
+exports.getFuncionarioById = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            `SELECT r.*, cr.Descricao AS ContaDescricao
-             FROM Recebimento r
-             JOIN ContaReceber cr ON r.ID_ContaReceber = cr.ID
-             WHERE r.ID = ? AND r.Removido = FALSE`,
-            [req.params.id]
-        );
-        if (rows.length === 0) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.json({ success: true, data: rows[0] });
+        const funcionario = await Funcionario.getById(req.params.id);
+        if (!funcionario) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json(funcionario);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao buscar funcionário", error: error.message });
     }
 };
 
-// POST /recebimentos
-exports.createRecebimento = async (req, res, next) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+exports.createFuncionario = async (req, res) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
+    if (!Nome || !Cargo) return res.status(400).json({ message: "Nome e Cargo são obrigatórios" });
 
-        const { Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
-        const [result] = await db.query(
-            `INSERT INTO Recebimento (Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento)
-             VALUES (?, ?, ?, ?, ?)`,
-            [Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento]
-        );
-        res.status(201).json({
-            success: true,
-            message: "Recebimento criado com sucesso",
-            data: { id: result.insertId, Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento }
-        });
+    try {
+        const result = await Funcionario.create({ Nome, Cargo, DataContratacao, Salario });
+        res.status(201).json({ message: "Funcionário criado com sucesso", id: result.id });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao criar funcionário", error: error.message });
     }
 };
 
-// PUT /recebimentos/:id
-exports.updateRecebimento = async (req, res, next) => {
+exports.updateFuncionario = async (req, res) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Descricao, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
-        const [result] = await db.query(
-            `UPDATE Recebimento SET Descricao = ?, DataRecebimento = ?, ValorRecebido = ?, MetodoPagamento = ?
-             WHERE ID = ? AND Removido = FALSE`,
-            [Descricao, DataRecebimento, ValorRecebido, MetodoPagamento, req.params.id]
-        );
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.json({ success: true, message: "Recebimento atualizado com sucesso" });
+        const result = await Funcionario.update({ Nome, Cargo, DataContratacao, Salario, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json({ message: "Funcionário atualizado com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao atualizar funcionário", error: error.message });
     }
 };
 
-// DELETE /recebimentos/:id
-exports.deleteRecebimento = async (req, res, next) => {
+exports.deleteFuncionario = async (req, res) => {
     try {
-        const [result] = await db.query("UPDATE Recebimento SET Removido = TRUE WHERE ID = ?", [req.params.id]);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.json({ success: true, message: "Recebimento removido com sucesso" });
+        const result = await Funcionario.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json({ message: "Funcionário removido com sucesso" });
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Erro ao remover funcionário", error: error.message });
     }
 };
