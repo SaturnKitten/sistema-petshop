@@ -1,37 +1,53 @@
-const db = require('../config/db.config');
+const Funcionario = require('../models/funcionario.model');
 
-const Funcionario = {
-    getAll: async () => {
-        const [rows] = await db.query("SELECT * FROM Funcionario WHERE Removido = FALSE");
-        return rows;
-    },
-
-    getById: async (id) => {
-        const [rows] = await db.query("SELECT * FROM Funcionario WHERE ID = ? AND Removido = FALSE", [id]);
-        return rows[0];
-    },
-
-    create: async ({ Nome, Cargo, DataContratacao, Salario }) => {
-        const [result] = await db.query(`
-            INSERT INTO Funcionario (Nome, Cargo, DataContratacao, Salario)
-            VALUES (?, ?, ?, ?)
-        `, [Nome, Cargo, DataContratacao, Salario]);
-        return { id: result.insertId };
-    },
-
-    update: async ({ Nome, Cargo, DataContratacao, Salario, ID }) => {
-        const [result] = await db.query(`
-            UPDATE Funcionario
-            SET Nome = ?, Cargo = ?, DataContratacao = ?, Salario = ?
-            WHERE ID = ? AND Removido = FALSE
-        `, [Nome, Cargo, DataContratacao, Salario, ID]);
-        return result;
-    },
-
-    delete: async (ID) => {
-        const [result] = await db.query("UPDATE Funcionario SET Removido = TRUE WHERE ID = ?", [ID]);
-        return result;
+exports.getAllFuncionario = async (req, res) => {
+    try {
+        const rows = await Funcionario.getAll();
+        res.status(200).json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao buscar funcionários", error: error.message });
     }
 };
 
-module.exports = Funcionario;
+exports.getFuncionarioById = async (req, res) => {
+    try {
+        const funcionario = await Funcionario.getById(req.params.id);
+        if (!funcionario) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json(funcionario);
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao buscar funcionário", error: error.message });
+    }
+};
+
+exports.createFuncionario = async (req, res) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
+    if (!Nome || !Cargo) return res.status(400).json({ message: "Nome e Cargo são obrigatórios" });
+
+    try {
+        const result = await Funcionario.create({ Nome, Cargo, DataContratacao, Salario });
+        res.status(201).json({ message: "Funcionário criado com sucesso", id: result.id });
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao criar funcionário", error: error.message });
+    }
+};
+
+exports.updateFuncionario = async (req, res) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
+    try {
+        const result = await Funcionario.update({ Nome, Cargo, DataContratacao, Salario, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json({ message: "Funcionário atualizado com sucesso" });
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao atualizar funcionário", error: error.message });
+    }
+};
+
+exports.deleteFuncionario = async (req, res) => {
+    try {
+        const result = await Funcionario.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
+        res.status(200).json({ message: "Funcionário removido com sucesso" });
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao remover funcionário", error: error.message });
+    }
+};
