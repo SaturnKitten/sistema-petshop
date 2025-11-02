@@ -4,7 +4,7 @@ const animalController = require('../controllers/animal.controller');
 const authenticateJWT = require('../middlewares/auth.middleware');
 const { body } = require('express-validator');
 
-router.get('/', authenticateJWT, animalController.getAllAnimals);
+router.get('/', authenticateJWT, animalController.getAllAnimais);
 router.get('/:id', authenticateJWT, animalController.getAnimalById);
 
 router.post(

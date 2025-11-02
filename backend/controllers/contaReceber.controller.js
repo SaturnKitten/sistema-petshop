@@ -1,66 +1,51 @@
 const ContaReceber = require('../models/contaReceber.model');
-const { validationResult } = require('express-validator');
 
-const getAllContasReceber = async (req, res, next) => {
+exports.getAllContasReceber = async (req, res) => {
     try {
-        const rows = await ContaReceber.getAll();
-        res.status(200).json({ success: true, data: rows });
+        const contas = await ContaReceber.getAll();
+        res.status(200).json({ success: true, data: contas });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar contas a receber', error: error.message });
     }
 };
 
-const getContaReceberById = async (req, res, next) => {
+exports.getContaReceberById = async (req, res) => {
     try {
         const conta = await ContaReceber.getById(req.params.id);
-        if (!conta) return res.status(404).json({ success: false, message: "Conta não encontrada" });
+        if (!conta) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
         res.status(200).json({ success: true, data: conta });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar conta', error: error.message });
     }
 };
 
-const createContaReceber = async (req, res, next) => {
+exports.createContaReceber = async (req, res) => {
+    const { Descricao, DataLancamento, Valor, ID_Cliente } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Descricao, DataLancamento, Valor, ID_Cliente } = req.body;
         const result = await ContaReceber.create({ Descricao, DataLancamento, Valor, ID_Cliente });
-        res.status(201).json({ success: true, message: "Conta criada com sucesso", data: { id: result.id } });
+        res.status(201).json({ success: true, message: 'Conta criada com sucesso', data: { id: result.id } });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao criar conta', error: error.message });
     }
 };
 
-const updateContaReceber = async (req, res, next) => {
+exports.updateContaReceber = async (req, res) => {
+    const { Descricao, DataLancamento, Valor, Status } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Descricao, DataLancamento, Valor, Status } = req.body;
         const result = await ContaReceber.update({ ID: req.params.id, Descricao, DataLancamento, Valor, Status });
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Conta não encontrada" });
-        res.status(200).json({ success: true, message: "Conta atualizada com sucesso" });
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
+        res.status(200).json({ success: true, message: 'Conta atualizada com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao atualizar conta', error: error.message });
     }
 };
 
-const deleteContaReceber = async (req, res, next) => {
+exports.deleteContaReceber = async (req, res) => {
     try {
         const result = await ContaReceber.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Conta não encontrada" });
-        res.status(200).json({ success: true, message: "Conta removida com sucesso" });
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Conta não encontrada' });
+        res.status(200).json({ success: true, message: 'Conta removida com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao remover conta', error: error.message });
     }
-};
-
-module.exports = {
-    getAllContasReceber,
-    getContaReceberById,
-    createContaReceber,
-    updateContaReceber,
-    deleteContaReceber
 };

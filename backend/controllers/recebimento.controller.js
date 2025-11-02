@@ -1,66 +1,51 @@
 const Recebimento = require('../models/recebimento.model');
-const { validationResult } = require('express-validator');
 
-const getAllRecebimentos = async (req, res, next) => {
+exports.getAllRecebimentos = async (req, res) => {
     try {
-        const rows = await Recebimento.getAll();
-        res.status(200).json({ success: true, data: rows });
+        const recebimentos = await Recebimento.getAll();
+        res.status(200).json({ success: true, data: recebimentos });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar recebimentos', error: error.message });
     }
 };
 
-const getRecebimentoById = async (req, res, next) => {
+exports.getRecebimentoById = async (req, res) => {
     try {
-        const rec = await Recebimento.getById(req.params.id);
-        if (!rec) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.status(200).json({ success: true, data: rec });
+        const recebimento = await Recebimento.getById(req.params.id);
+        if (!recebimento) return res.status(404).json({ success: false, message: 'Recebimento não encontrado' });
+        res.status(200).json({ success: true, data: recebimento });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar recebimento', error: error.message });
     }
 };
 
-const createRecebimento = async (req, res, next) => {
+exports.createRecebimento = async (req, res) => {
+    const { Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
         const result = await Recebimento.create({ Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento });
-        res.status(201).json({ success: true, message: "Recebimento criado com sucesso", data: { id: result.id } });
+        res.status(201).json({ success: true, message: 'Recebimento criado com sucesso', data: { id: result.id } });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao criar recebimento', error: error.message });
     }
 };
 
-const updateRecebimento = async (req, res, next) => {
+exports.updateRecebimento = async (req, res) => {
+    const { Descricao, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
-
-        const { Descricao, DataRecebimento, ValorRecebido, MetodoPagamento } = req.body;
         const result = await Recebimento.update({ ID: req.params.id, Descricao, DataRecebimento, ValorRecebido, MetodoPagamento });
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.status(200).json({ success: true, message: "Recebimento atualizado com sucesso" });
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Recebimento não encontrado' });
+        res.status(200).json({ success: true, message: 'Recebimento atualizado com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao atualizar recebimento', error: error.message });
     }
 };
 
-const deleteRecebimento = async (req, res, next) => {
+exports.deleteRecebimento = async (req, res) => {
     try {
         const result = await Recebimento.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Recebimento não encontrado" });
-        res.status(200).json({ success: true, message: "Recebimento removido com sucesso" });
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Recebimento não encontrado' });
+        res.status(200).json({ success: true, message: 'Recebimento removido com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao remover recebimento', error: error.message });
     }
-};
-
-module.exports = {
-    getAllRecebimentos,
-    getRecebimentoById,
-    createRecebimento,
-    updateRecebimento,
-    deleteRecebimento
 };

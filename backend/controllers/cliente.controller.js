@@ -1,61 +1,51 @@
-const Funcionario = require('../models/funcionario.model');
+const Cliente = require('../models/cliente.model');
 
-const getAllFuncionarios = async (req, res, next) => {
+exports.getAllClientes = async (req, res) => {
     try {
-        const rows = await Funcionario.getAll();
-        res.status(200).json({ success: true, data: rows });
+        const clientes = await Cliente.getAll();
+        res.status(200).json({ success: true, data: clientes });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar clientes', error: error.message });
     }
 };
 
-const getFuncionarioById = async (req, res, next) => {
+exports.getClienteById = async (req, res) => {
     try {
-        const funcionario = await Funcionario.getById(req.params.id);
-        if (!funcionario) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.status(200).json({ success: true, data: funcionario });
+        const cliente = await Cliente.getById(req.params.id);
+        if (!cliente) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
+        res.status(200).json({ success: true, data: cliente });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao buscar cliente', error: error.message });
     }
 };
 
-const createFuncionario = async (req, res, next) => {
-    const { Nome, Cargo, DataContratacao, Salario } = req.body;
-    if (!Nome || !Cargo) return res.status(400).json({ success: false, message: "Nome e Cargo são obrigatórios" });
-
+exports.createCliente = async (req, res) => {
+    const { Nome, Telefone, Email } = req.body;
     try {
-        const result = await Funcionario.create({ Nome, Cargo, DataContratacao, Salario });
-        res.status(201).json({ success: true, message: "Funcionário criado com sucesso", data: { id: result.id } });
+        const result = await Cliente.create({ Nome, Telefone, Email });
+        res.status(201).json({ success: true, message: 'Cliente criado com sucesso', data: { id: result.id } });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao criar cliente', error: error.message });
     }
 };
 
-const updateFuncionario = async (req, res, next) => {
-    const { Nome, Cargo, DataContratacao, Salario } = req.body;
+exports.updateCliente = async (req, res) => {
+    const { Nome, Telefone, Email } = req.body;
     try {
-        const result = await Funcionario.update({ Nome, Cargo, DataContratacao, Salario, ID: req.params.id });
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.status(200).json({ success: true, message: "Funcionário atualizado com sucesso" });
+        const result = await Cliente.update({ ID: req.params.id, Nome, Telefone, Email });
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
+        res.status(200).json({ success: true, message: 'Cliente atualizado com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao atualizar cliente', error: error.message });
     }
 };
 
-const deleteFuncionario = async (req, res, next) => {
+exports.deleteCliente = async (req, res) => {
     try {
-        const result = await Funcionario.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
-        res.status(200).json({ success: true, message: "Funcionário removido com sucesso" });
+        const result = await Cliente.delete(req.params.id);
+        if (result.rowCount === 0) return res.status(404).json({ success: false, message: 'Cliente não encontrado' });
+        res.status(200).json({ success: true, message: 'Cliente removido com sucesso' });
     } catch (error) {
-        next(error);
+        res.status(500).json({ success: false, message: 'Erro ao remover cliente', error: error.message });
     }
-};
-
-module.exports = {
-    getAllFuncionarios,
-    getFuncionarioById,
-    createFuncionario,
-    updateFuncionario,
-    deleteFuncionario
 };
