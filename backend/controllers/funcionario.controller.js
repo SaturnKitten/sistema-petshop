@@ -1,53 +1,61 @@
 const Funcionario = require('../models/funcionario.model');
 
-exports.getAllFuncionario = async (req, res) => {
+const getAllFuncionarios = async (req, res, next) => {
     try {
         const rows = await Funcionario.getAll();
-        res.status(200).json(rows);
+        res.status(200).json({ success: true, data: rows });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar funcionários", error: error.message });
+        next(error);
     }
 };
 
-exports.getFuncionarioById = async (req, res) => {
+const getFuncionarioById = async (req, res, next) => {
     try {
         const funcionario = await Funcionario.getById(req.params.id);
-        if (!funcionario) return res.status(404).json({ message: "Funcionário não encontrado" });
-        res.status(200).json(funcionario);
+        if (!funcionario) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, data: funcionario });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar funcionário", error: error.message });
+        next(error);
     }
 };
 
-exports.createFuncionario = async (req, res) => {
+const createFuncionario = async (req, res, next) => {
     const { Nome, Cargo, DataContratacao, Salario } = req.body;
-    if (!Nome || !Cargo) return res.status(400).json({ message: "Nome e Cargo são obrigatórios" });
+    if (!Nome || !Cargo) return res.status(400).json({ success: false, message: "Nome e Cargo são obrigatórios" });
 
     try {
         const result = await Funcionario.create({ Nome, Cargo, DataContratacao, Salario });
-        res.status(201).json({ message: "Funcionário criado com sucesso", id: result.id });
+        res.status(201).json({ success: true, message: "Funcionário criado com sucesso", data: { id: result.id } });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao criar funcionário", error: error.message });
+        next(error);
     }
 };
 
-exports.updateFuncionario = async (req, res) => {
+const updateFuncionario = async (req, res, next) => {
     const { Nome, Cargo, DataContratacao, Salario } = req.body;
     try {
         const result = await Funcionario.update({ Nome, Cargo, DataContratacao, Salario, ID: req.params.id });
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
-        res.status(200).json({ message: "Funcionário atualizado com sucesso" });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, message: "Funcionário atualizado com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao atualizar funcionário", error: error.message });
+        next(error);
     }
 };
 
-exports.deleteFuncionario = async (req, res) => {
+const deleteFuncionario = async (req, res, next) => {
     try {
         const result = await Funcionario.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Funcionário não encontrado" });
-        res.status(200).json({ message: "Funcionário removido com sucesso" });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, message: "Funcionário removido com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao remover funcionário", error: error.message });
+        next(error);
     }
+};
+
+module.exports = {
+    getAllFuncionarios,
+    getFuncionarioById,
+    createFuncionario,
+    updateFuncionario,
+    deleteFuncionario
 };

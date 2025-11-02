@@ -1,55 +1,61 @@
-const Cliente = require('../models/cliente.model');
+const Funcionario = require('../models/funcionario.model');
 
-exports.getAllClientes = async (req, res) => {
+const getAllFuncionarios = async (req, res, next) => {
     try {
-        const [rows] = await Cliente.getAll();
-        res.status(200).json(rows);
+        const rows = await Funcionario.getAll();
+        res.status(200).json({ success: true, data: rows });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar clientes", error: error.message });
+        next(error);
     }
 };
 
-exports.getClienteById = async (req, res) => {
+const getFuncionarioById = async (req, res, next) => {
     try {
-        const [rows] = await Cliente.getById(req.params.id);
-        if (rows.length === 0) return res.status(404).json({ message: "Cliente não encontrado" });
-        res.status(200).json(rows[0]);
+        const funcionario = await Funcionario.getById(req.params.id);
+        if (!funcionario) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, data: funcionario });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar cliente", error: error.message });
+        next(error);
     }
 };
 
-exports.createCliente = async (req, res) => {
-    const { Nome, Telefone, Email } = req.body;
-    if (!Nome) return res.status(400).json({ message: "Nome é obrigatório" });
+const createFuncionario = async (req, res, next) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
+    if (!Nome || !Cargo) return res.status(400).json({ success: false, message: "Nome e Cargo são obrigatórios" });
 
     try {
-        const [result] = await Cliente.create({ Nome, Telefone, Email });
-        res.status(201).json({ message: "Cliente criado com sucesso", id: result.insertId });
+        const result = await Funcionario.create({ Nome, Cargo, DataContratacao, Salario });
+        res.status(201).json({ success: true, message: "Funcionário criado com sucesso", data: { id: result.id } });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao criar cliente", error: error.message });
+        next(error);
     }
 };
 
-exports.updateCliente = async (req, res) => {
-    const { Nome, Telefone, Email } = req.body;
-    if (!Nome) return res.status(400).json({ message: "Nome é obrigatório" });
-
+const updateFuncionario = async (req, res, next) => {
+    const { Nome, Cargo, DataContratacao, Salario } = req.body;
     try {
-        const [result] = await Cliente.update({ Nome, Telefone, Email, ID: req.params.id });
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente não encontrado" });
-        res.status(200).json({ message: "Cliente atualizado com sucesso" });
+        const result = await Funcionario.update({ Nome, Cargo, DataContratacao, Salario, ID: req.params.id });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, message: "Funcionário atualizado com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao atualizar cliente", error: error.message });
+        next(error);
     }
 };
 
-exports.deleteCliente = async (req, res) => {
+const deleteFuncionario = async (req, res, next) => {
     try {
-        const [result] = await Cliente.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Cliente não encontrado" });
-        res.status(200).json({ message: "Cliente removido com sucesso" });
+        const result = await Funcionario.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Funcionário não encontrado" });
+        res.status(200).json({ success: true, message: "Funcionário removido com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao remover cliente", error: error.message });
+        next(error);
     }
+};
+
+module.exports = {
+    getAllFuncionarios,
+    getFuncionarioById,
+    createFuncionario,
+    updateFuncionario,
+    deleteFuncionario
 };

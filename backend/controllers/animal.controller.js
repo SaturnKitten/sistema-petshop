@@ -1,57 +1,66 @@
-const Animal = require('../models/animal.model');
+const Cliente = require('../models/cliente.model');
+const { validationResult } = require('express-validator');
 
-exports.getAllAnimals = async (req, res) => {
+const getAllClientes = async (req, res, next) => {
     try {
-        const rows = await Animal.getAll();
-        res.status(200).json(rows);
+        const rows = await Cliente.getAll();
+        res.status(200).json({ success: true, data: rows });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar animais", error: error.message });
+        next(error);
     }
 };
 
-exports.getAnimalById = async (req, res) => {
+const getClienteById = async (req, res, next) => {
     try {
-        const animal = await Animal.getById(req.params.id);
-        if (!animal) return res.status(404).json({ message: "Animal não encontrado" });
-        res.status(200).json(animal);
+        const cliente = await Cliente.getById(req.params.id);
+        if (!cliente) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+        res.status(200).json({ success: true, data: cliente });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao buscar animal", error: error.message });
+        next(error);
     }
 };
 
-exports.createAnimal = async (req, res) => {
-    const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
-    if (!Nome || !Especie || !ID_Cliente)
-        return res.status(400).json({ message: "Nome, Espécie e ID_Cliente são obrigatórios" });
-
+const createCliente = async (req, res, next) => {
     try {
-        const result = await Animal.create({ Nome, Especie, Raca, DataNascimento, ID_Cliente });
-        res.status(201).json({ message: "Animal criado com sucesso", id: result.id });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+
+        const { Nome, Telefone, Email } = req.body;
+        const result = await Cliente.create({ Nome, Telefone, Email });
+        res.status(201).json({ success: true, message: "Cliente criado com sucesso", data: { id: result.id } });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao criar animal", error: error.message });
+        next(error);
     }
 };
 
-exports.updateAnimal = async (req, res) => {
-    const { Nome, Especie, Raca, DataNascimento, ID_Cliente } = req.body;
-    if (!Nome || !Especie)
-        return res.status(400).json({ message: "Nome e Espécie são obrigatórios" });
-
+const updateCliente = async (req, res, next) => {
     try {
-        const result = await Animal.update({ Nome, Especie, Raca, DataNascimento, ID_Cliente, ID: req.params.id });
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Animal não encontrado" });
-        res.status(200).json({ message: "Animal atualizado com sucesso" });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ success: false, errors: errors.array() });
+
+        const { Nome, Telefone, Email } = req.body;
+        const result = await Cliente.update({ ID: req.params.id, Nome, Telefone, Email });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+        res.status(200).json({ success: true, message: "Cliente atualizado com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao atualizar animal", error: error.message });
+        next(error);
     }
 };
 
-exports.deleteAnimal = async (req, res) => {
+const deleteCliente = async (req, res, next) => {
     try {
-        const result = await Animal.delete(req.params.id);
-        if (result.affectedRows === 0) return res.status(404).json({ message: "Animal não encontrado" });
-        res.status(200).json({ message: "Animal removido com sucesso" });
+        const result = await Cliente.delete(req.params.id);
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Cliente não encontrado" });
+        res.status(200).json({ success: true, message: "Cliente removido com sucesso" });
     } catch (error) {
-        res.status(500).json({ message: "Erro ao remover animal", error: error.message });
+        next(error);
     }
+};
+
+module.exports = {
+    getAllClientes,
+    getClienteById,
+    createCliente,
+    updateCliente,
+    deleteCliente
 };

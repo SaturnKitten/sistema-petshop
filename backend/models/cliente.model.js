@@ -1,32 +1,44 @@
-const db = require('../config/db.config');
+const pool = require('../config/db.config');
 
-const getAllClientes = async () => {
-  const [rows] = await db.query('SELECT * FROM Cliente WHERE Removido = FALSE');
-  return rows;
+const Cliente = {
+    getAll: async () => {
+        const res = await pool.query(`
+            SELECT * FROM Cliente WHERE Removido = FALSE
+        `);
+        return res.rows;
+    },
+
+    getById: async (id) => {
+        const res = await pool.query(`
+            SELECT * FROM Cliente WHERE ID = $1 AND Removido = FALSE
+        `, [id]);
+        return res.rows[0];
+    },
+
+    create: async ({ Nome, Telefone, Email }) => {
+        const res = await pool.query(`
+            INSERT INTO Cliente (Nome, Telefone, Email, DataCadastro)
+            VALUES ($1, $2, $3, CURRENT_DATE)
+            RETURNING ID
+        `, [Nome, Telefone, Email]);
+        return { id: res.rows[0].id };
+    },
+
+    update: async ({ ID, Nome, Telefone, Email }) => {
+        const res = await pool.query(`
+            UPDATE Cliente
+            SET Nome = $1, Telefone = $2, Email = $3
+            WHERE ID = $4 AND Removido = FALSE
+        `, [Nome, Telefone, Email, ID]);
+        return res;
+    },
+
+    delete: async (ID) => {
+        const res = await pool.query(`
+            UPDATE Cliente SET Removido = TRUE WHERE ID = $1
+        `, [ID]);
+        return res;
+    }
 };
 
-const getClienteByID = async (id) => {
-  const [rows] = await db.query('SELECT * FROM Cliente WHERE ID = ? AND Removido = FALSE', [id]);
-  return rows[0];
-};
-
-const insertCliente = async (nome, telefone, email) => {
-  const [result] = await db.query(
-    'INSERT INTO Cliente (Nome, Telefone, Email, DataCadastro) VALUES (?, ?, ?, CURDATE())',
-    [nome, telefone, email]
-  );
-  return result.insertId;
-};
-
-const updateCliente = async (id, nome, telefone, email) => {
-  await db.query(
-    'UPDATE Cliente SET Nome = ?, Telefone = ?, Email = ? WHERE ID = ? AND Removido = FALSE',
-    [nome, telefone, email, id]
-  );
-};
-
-const deleteCliente = async (id) => {
-  await db.query('UPDATE Cliente SET Removido = TRUE WHERE ID = ?', [id]);
-};
-
-module.exports = { getAllClientes, getClienteByID, insertCliente, updateCliente, deleteCliente };
+module.exports = Cliente;
