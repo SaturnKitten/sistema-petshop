@@ -57,7 +57,7 @@ exports.updateCliente = async (req, res, next) => {
         const { Nome, Telefone, Email } = req.body;
         const [result] = await db.query(
             "UPDATE Cliente SET Nome = ?, Telefone = ?, Email = ? WHERE ID = ? AND Removido = FALSE",
-            [Nome, Telefone, Email, req.params.id]
+            [Nome, Telefone, Email, ID]
         );
         if (result.affectedRows === 0)
             return res.status(404).json({ success: false, message: "Cliente não encontrado" });
