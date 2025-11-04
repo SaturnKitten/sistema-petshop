@@ -5,8 +5,8 @@ POST http://localhost:40000/Login HTTP/1.1
 content-type: application/json
 
 {    
-    "UserName": "qwe",
-    "Password": "qwe"
+    "UserName": "admin",
+    "Password": "admin"
 }
 ### Seta o token
 @accessToken = {{loginAutenticado.response.body.$.token}}
@@ -14,24 +14,22 @@ content-type: application/json
 
 
 
-### teste de inserção de aluno
-POST http://localhost:40000/insertRecebimento HTTP/1.1
+### teste de inserção de recebimentos
+POST http://localhost:40000/InsertRecebimentos HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{accessToken}}
 
 {    
-    "alunoid": 0,
-    "prontuario": "pront9",
-    "nome": "Carlos das Matias",
-    "endereco": " Rua das couves",
-    "rendafamiliar": 10000,
-    "datanascimento": "1999-12-12",
-    "cursoid": 2,
-    "deleted": false
+    "ID": 0,
+    "Descricao": "Recebimento Teste",
+    "ID_ContaReceber": 1,
+    "DataRecebimento": "2023-01-01",
+    "ValorRecebido": 1000.00,
+    "Removido": false
 }
 
-### teste de buscar todos os alunos
-GET http://localhost:40000/getAllAlunos HTTP/1.1
+### teste de buscar todos os recebimentos
+GET http://localhost:40000/getAllRecebimentos HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -39,35 +37,33 @@ Authorization: Bearer {{accessToken}}
     
 }
 
-### teste de buscar aluno por ID
-POST http://localhost:40000/getAlunoByID HTTP/1.1
+### teste de buscar recebimentos por ID
+POST http://localhost:40000/getRecebimentosByID HTTP/1.1
 content-type: application/json
 Authorization: Bearer {{accessToken}}
 
 {    
-    "alunoid": 1
+    "ID": 1
 }
 
 
 
-### teste de atualização de aluno
-POST http://localhost:40000/updateAlunos HTTP/1.1
+### teste de atualização de recebimentos
+POST http://localhost:40000/updateRecebimentos HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF3ZSIsImlhdCI6MTY5MTQzNTg3MSwiZXhwIjoxNjkxNDM2NDcxfQ.hAh0VyRfEXvYmhunlJALD-qda8pYr2zzAHobn1yua20
 
 {    
-    "alunoid": 52,
-    "prontuario": "pront109",
-    "nome": "xJosé das Neves",
-    "endereco": "x Rua das couves",
-    "rendafamiliar": 0,
-    "datanascimento": "1999-12-12",
-    "cursoid": 2,
-    "deleted": false
+    "ID": 0,
+    "Descricao": "Recebimento Teste2",
+    "ID_ContaReceber": 1,
+    "DataRecebimento": "2023-01-01",
+    "ValorRecebido": 1000.00,
+    "Removido": false
 }
 
-### teste de atualização de aluno
-POST http://localhost:40000/DeleteAlunos HTTP/1.1
+### teste de atualização de recebimentos
+POST http://localhost:40000/DeleteRecebimentos HTTP/1.1
 content-type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InF3ZSIsImlhdCI6MTY5MTQ5MDg3NCwiZXhwIjoxNjkxNDkxNDc0fQ.1ABhMgWYm8gGKy7q90GOPQpNoY5M1LLzpCltKxFjcEo
 
