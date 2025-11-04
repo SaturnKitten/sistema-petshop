@@ -3,13 +3,6 @@ const mdlContaReceber = require("../model/mdlContaReceber");
 const getAllContas = (req, res) =>
   (async () => {
     let registro = await mdlContaReceber.getAllContas();
-    for (let i = 0; i < registro.length; i++) {
-      const row = registro[i];
-      if (row.DataLancamento) {
-        const formattedDate = row.DataLancamento.toISOString().split('T')[0];
-        row.DataLancamento = formattedDate;
-      }
-    }
     res.json({ status: "ok", registro: registro });
   })();
 
@@ -48,3 +41,4 @@ module.exports = {
   updateContas,
   deleteContas
 };
+
