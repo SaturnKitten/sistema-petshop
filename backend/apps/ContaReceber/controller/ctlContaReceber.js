@@ -1,5 +1,6 @@
 const mdlContaReceber = require("../model/mdlContaReceber");
 
+
 const GetAllContas = (req, res) =>
   (async () => {
     let registro = await mdlContaReceber.getAllContas();
