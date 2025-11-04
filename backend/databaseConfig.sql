@@ -36,12 +36,15 @@ INSERT INTO Recebimento (Descricao, ID_ContaReceber, DataRecebimento, ValorReceb
     ('Pagamento consulta veterinária - João Silva', 1, '2024-06-02', 150.00, 'CARTÃO DE CRÉDITO', FALSE),
     ('Pagamento vacinação - Maria Oliveira', 2, '2024-06-04', 200.00, 'DINHEIRO', FALSE);
 
+-- Habilita a extensão pgcrypto para geração de UUIDs
+CREATE EXTENSION if NOT EXISTS pgcrypto;
+
 --Tabela funcionário
 CREATE TABLE IF NOT EXISTS Funcionario (
     ID SERIAL PRIMARY KEY,
     Nome VARCHAR(255) NOT NULL,
     Username VARCHAR(100) NOT NULL UNIQUE,
-    Senha TEXT NOT NULL,
+    Password TEXT NOT NULL,
     Cargo VARCHAR(100),
     DataContratacao DATE NOT NULL,
     Salario NUMERIC(10,2) NOT NULL,
@@ -49,7 +52,8 @@ CREATE TABLE IF NOT EXISTS Funcionario (
 );
 
 --Insert funcionário
-INSERT INTO Funcionario (Nome, Username, Senha, Cargo, DataContratacao, Salario, Removido) VALUES
-    ('Administrador', 'adm', 'adm', 'Administrador', '2022-01-01', 6000.00, FALSE),
-    ('Ana Paula', 'anapaula', 'senha123', 'Atendente', '2023-01-15', 2500.00, FALSE),
-    ('Carlos Eduardo', 'carloseduardo', 'senha456', 'Veterinário', '2022-11-20', 5000.00, FALSE);
+INSERT INTO Funcionario (Nome, Username, Password, Cargo, DataContratacao, Salario, Removido) VALUES
+    ('Administrador', 'admin', crypt('admin', gen_salt('bf')), 'Administrador', '2022-01-01', 6000.00, FALSE),
+    ('Ana Paula', 'anapaula', crypt('senha123', gen_salt('bf')), 'Atendente', '2023-01-15', 2500.00, FALSE),
+    ('Carlos Eduardo', 'carloseduardo', crypt('senha456', gen_salt('bf')), 'Veterinário', '2022-11-20', 5000.00, FALSE)
+ON CONFLICT DO NOTHING;
