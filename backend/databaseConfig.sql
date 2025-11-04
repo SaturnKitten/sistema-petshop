@@ -1,5 +1,5 @@
 -- Cria o banco de dados
-CREATE DATABASE petshop;
+CREATE DATABASE PetShopDB;
 
 --Tabela contareceber
 CREATE TABLE IF NOT EXISTS ContaReceber (
@@ -40,6 +40,8 @@ INSERT INTO Recebimento (Descricao, ID_ContaReceber, DataRecebimento, ValorReceb
 CREATE TABLE IF NOT EXISTS Funcionario (
     ID SERIAL PRIMARY KEY,
     Nome VARCHAR(255) NOT NULL,
+    Username VARCHAR(100) NOT NULL UNIQUE,
+    Senha TEXT NOT NULL,
     Cargo VARCHAR(100),
     DataContratacao DATE NOT NULL,
     Salario NUMERIC(10,2) NOT NULL,
@@ -47,6 +49,7 @@ CREATE TABLE IF NOT EXISTS Funcionario (
 );
 
 --Insert funcionário
-INSERT INTO Funcionario (Nome, Cargo, DataContratacao, Salario, Removido) VALUES
-    ('Ana Paula', 'Veterinária', '2022-03-15', 5000.00, FALSE),
-    ('Carlos Eduardo', 'Atendente', '2023-07-22', 2500.00, FALSE);
+INSERT INTO Funcionario (Nome, Username, Senha, Cargo, DataContratacao, Salario, Removido) VALUES
+    ('Administrador', 'adm', 'adm', 'Administrador', '2022-01-01', 6000.00, FALSE),
+    ('Ana Paula', 'anapaula', 'senha123', 'Atendente', '2023-01-15', 2500.00, FALSE),
+    ('Carlos Eduardo', 'carloseduardo', 'senha456', 'Veterinário', '2022-11-20', 5000.00, FALSE);
