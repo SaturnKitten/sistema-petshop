@@ -1,68 +1,44 @@
 const mdlFuncionario = require("../model/mdlFuncionario");
 
-
-const getAllFuncionarios = (req, res) =>
+const GetAllFuncionarios = (req, res) =>
   (async () => {
-    try {
-      const registro = await mdlFuncionario.getAllFuncionarios();
-      res.json({ status: "ok", registro });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    let registro = await mdlFuncionario.GetAllFuncionarios();
+    res.json({ status: "ok", registro: registro });
   })();
 
-
-const getFuncionarioByID = (req, res) =>
+const GetFuncionarioByID = (req, res) =>
   (async () => {
-    try {
-      const funcionarioID = parseInt(req.body.id);
-      const registro = await mdlFuncionario.getFuncionarioByID(funcionarioID);
-      res.json({ status: "ok", registro });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const funcionarioID = parseInt(req.body.id);
+    let registro = await mdlFuncionario.GetFuncionarioByID(funcionarioID);
+    res.json({ status: "ok", registro: registro });
   })();
 
-
-const insertFuncionario = (req, res) =>
+const InsertFuncionario = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlFuncionario.insertFuncionario(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlFuncionario.InsertFuncionario(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-
-const updateFuncionario = (req, res) =>
+const UpdateFuncionario = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlFuncionario.updateFuncionario(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlFuncionario.UpdateFuncionario(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-
-const deleteFuncionario = (req, res) =>
+const DeleteFuncionario = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlFuncionario.deleteFuncionario(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlFuncionario.DeleteFuncionario(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
 module.exports = {
-  getAllFuncionarios,
-  getFuncionarioByID,
-  insertFuncionario,
-  updateFuncionario,
-  deleteFuncionario,
+  GetAllFuncionarios,
+  GetFuncionarioByID,
+  InsertFuncionario,
+  UpdateFuncionario,
+  DeleteFuncionario
 };
+
