@@ -1,7 +1,7 @@
 -- Cria o banco de dados
 CREATE DATABASE petshop;
 
---Tabela conta a receber
+--Tabela contareceber
 CREATE TABLE IF NOT EXISTS ContaReceber (
     ID SERIAL PRIMARY KEY,
     Descricao VARCHAR(255) NOT NULL,
@@ -10,6 +10,13 @@ CREATE TABLE IF NOT EXISTS ContaReceber (
     Status VARCHAR(50) NOT NULL DEFAULT 'PENDENTE',
     Removido BOOLEAN NOT NULL DEFAULT FALSE
 );
+
+--Insert contareceber
+INSERT INTO ContaReceber (Descricao, DataLancamento, Valor, Status, Removido) VALUES
+    ('Consulta veterinária - João Silva', '2024-06-01', 150.00, 'PENDENTE', FALSE),
+    ('Vacinação - Maria Oliveira', '2024-06-03', 200.00, 'PENDENTE', FALSE),
+    ('Banho e Tosa - Pedro Santos', '2024-06-05', 80.00, 'PENDENTE', FALSE);
+
 
 --Tabela recebimento
 CREATE TABLE IF NOT EXISTS Recebimento (
@@ -24,6 +31,11 @@ CREATE TABLE IF NOT EXISTS Recebimento (
     Removido BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+--Insert recebimento
+INSERT INTO Recebimento (Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento, Removido) VALUES
+    ('Pagamento consulta veterinária - João Silva', 1, '2024-06-02', 150.00, 'CARTÃO DE CRÉDITO', FALSE),
+    ('Pagamento vacinação - Maria Oliveira', 2, '2024-06-04', 200.00, 'DINHEIRO', FALSE);
+
 --Tabela funcionário
 CREATE TABLE IF NOT EXISTS Funcionario (
     ID SERIAL PRIMARY KEY,
@@ -33,3 +45,8 @@ CREATE TABLE IF NOT EXISTS Funcionario (
     Salario NUMERIC(10,2) NOT NULL,
     Removido BOOLEAN DEFAULT FALSE
 );
+
+--Insert funcionário
+INSERT INTO Funcionario (Nome, Cargo, DataContratacao, Salario, Removido) VALUES
+    ('Ana Paula', 'Veterinária', '2022-03-15', 5000.00, FALSE),
+    ('Carlos Eduardo', 'Atendente', '2023-07-22', 2500.00, FALSE);
