@@ -30,7 +30,7 @@ const InsertFuncionario = async (funcionarioREGPar) => {
         [
           funcionarioREGPar.nome,
           funcionarioREGPar.username,
-          funcionarioREGPar.senha,
+          funcionarioREGPar.password,
           funcionarioREGPar.cargo,
           funcionarioREGPar.datacontratacao,
           funcionarioREGPar.salario
@@ -54,7 +54,7 @@ const UpdateFuncionario = async (funcionarioREGPar) => {
         "UPDATE Funcionario SET " +
         "Nome = $2, " +
         "Username = $3, " +
-        "Senha = $4, " +
+        "password = $4, " +
         "Cargo = $5, " +
         "DataContratacao = $6, " +
         "Salario = $7 " +
@@ -63,7 +63,7 @@ const UpdateFuncionario = async (funcionarioREGPar) => {
           funcionarioREGPar.id,
           funcionarioREGPar.nome,
           funcionarioREGPar.username,
-          funcionarioREGPar.senha,
+          funcionarioREGPar.password,
           funcionarioREGPar.cargo,
           funcionarioREGPar.datacontratacao,
           funcionarioREGPar.salario
