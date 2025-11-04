@@ -2,6 +2,7 @@
   <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
     <div class="sb-sidenav-menu">
       <div class="nav">
+        <!-- Menu Principal -->
         <div class="sb-sidenav-menu-heading">Principal</div>
         <a class="nav-link" href="/">
           <div class="sb-nav-link-icon">
@@ -10,56 +11,79 @@
           Home
         </a>
         
-        <!-- Módulo acadêmico -->
+        <!-- Módulo Funcionários -->
         <div>
-          <div class="sb-sidenav-menu-heading">Acadêmico</div>
+          <div class="sb-sidenav-menu-heading">Funcionários</div>
 
-          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-            aria-expanded="false" aria-controls="collapsePages">
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseFuncionarios"
+            aria-expanded="false" aria-controls="collapseFuncionarios">
             <div class="sb-nav-link-icon">
-              <i class="fas fa-book-open"></i>
+              <i class="fas fa-users"></i>
             </div>
-            Acadêmico
+            Funcionários
             <div class="sb-sidenav-collapse-arrow">
               <i class="fas fa-angle-down"></i>
             </div>
           </a>
-          <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-              <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth"
-                aria-expanded="false" aria-controls="pagesCollapseAuth">
-                Alunos
-                <div class="sb-sidenav-collapse-arrow">
-                  <i class="fas fa-angle-down"></i>
-                </div>
-              </a>
-              <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
-                data-bs-parent="#sidenavAccordionPages">
-                <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="/alunos/ManutAlunos">Manutenção de alunos</a>
-                </nav>
-              </div>
-              <a class="nav-link collapsed" href="/cursos" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError"
-                aria-expanded="false" aria-controls="pagesCollapseError">
-                Cursos
-                <div class="sb-sidenav-collapse-arrow">
-                  <i class="fas fa-angle-down"></i>
-                </div>
-              </a>
-              <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne"
-                data-bs-parent="#sidenavAccordionPages">
-                <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="/cursos/ManutCursos">Manutenção de cursos</a>
-                </nav>
-              </div>
+          <div class="collapse" id="collapseFuncionarios" aria-labelledby="headingFuncionarios" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <a class="nav-link" href="/Funcionario">Listar Funcionários</a>
+              <a class="nav-link" href="/Funcionario/inserir">Novo Funcionário</a>
             </nav>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="sb-sidenav-footer">
-      <div class="small">Bem vindo:</div>
-        {{ parametros.Usuario }}      
-    </div>
+
+        <!-- Módulo Conta a Receber -->
+        <div>
+          <div class="sb-sidenav-menu-heading">Financeiro</div>
+
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseContaReceber"
+            aria-expanded="false" aria-controls="collapseContaReceber">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            Conta a Receber
+            <div class="sb-sidenav-collapse-arrow">
+              <i class="fas fa-angle-down"></i>
+            </div>
+          </a>
+          <div class="collapse" id="collapseContaReceber" aria-labelledby="headingContaReceber" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <a class="nav-link" href="/ContaReceber">Listar Contas a Receber</a>
+              <a class="nav-link" href="/ContaReceber/inserir">Nova Conta</a>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Módulo Recebimentos -->
+        <div>
+          <div class="sb-sidenav-menu-heading">Financeiro</div>
+
+          <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseRecebimentos"
+            aria-expanded="false" aria-controls="collapseRecebimentos">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-money-check-alt"></i>
+            </div>
+            Recebimentos
+            <div class="sb-sidenav-collapse-arrow">
+              <i class="fas fa-angle-down"></i>
+            </div>
+          </a>
+          <div class="collapse" id="collapseRecebimentos" aria-labelledby="headingRecebimentos" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+              <a class="nav-link" href="/Recebimento">Listar Recebimentos</a>
+              <a class="nav-link" href="/Recebimento/inserir">Novo Recebimento</a>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Menu Login -->
+        <div class="sb-sidenav-footer">
+          <div class="small">Bem-vindo, {{ parametros.Usuario }}</div>
+          <a class="nav-link" href="javascript:void(0);" onclick="siadLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
+      </div>    </div>
   </nav>
 </div>
