@@ -95,8 +95,4 @@ module.exports = {
     deleteContas
 };
 
-    getContasByID,
-    insertContas,
-    updateContas,
-    deleteContas
-};
+   
