@@ -6,7 +6,7 @@ const GetAllRecebimentos = (req, res) =>
     res.json({ status: "ok", registro: registro });
   })();
 
-const GetRecebimentoByID = (req, res) =>
+const GetRecebimentosByID = (req, res) =>
   (async () => {
     const recebimentoID = parseInt(req.body.id);
     let registro = await mdlRecebimento.GetRecebimentoByID(recebimentoID);
@@ -36,7 +36,7 @@ const DeleteRecebimentos = (request, res) =>
 
 module.exports = {
   GetAllRecebimentos,
-  GetRecebimentoByID,
+  GetRecebimentosByID,
   InsertRecebimentos,
   UpdateRecebimentos,
   DeleteRecebimentos

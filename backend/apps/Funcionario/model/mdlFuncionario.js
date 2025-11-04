@@ -54,7 +54,7 @@ const UpdateFuncionario = async (funcionarioREGPar) => {
         "UPDATE Funcionario SET " +
         "Nome = $2, " +
         "Username = $3, " +
-        "password = $4, " +
+        "Password = $4, " +
         "Cargo = $5, " +
         "DataContratacao = $6, " +
         "Salario = $7 " +

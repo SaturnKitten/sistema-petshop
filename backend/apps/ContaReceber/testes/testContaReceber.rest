@@ -1,0 +1,64 @@
+### Necessário para pegar o token
+### Post
+# @name loginAutenticado
+POST http://localhost:40000/Login HTTP/1.1
+content-type: application/json
+
+{
+    "Username": "admin",
+    "Password": "admin"
+}
+### Seta o token
+@accessToken = {{loginAutenticado.response.body.$.token}}
+
+
+### Teste de inserção de contas
+POST http://localhost:40000/InsertContas HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "ID": 0,
+    "Descricao": "Serviço de banho e tosa",
+    "DataLancamento": "2023-01-01",
+    "Valor": 1500.00,
+    "Status": "Pendente",
+    "Removido": false
+}
+
+### Teste de buscar todos as contas
+GET http://localhost:40000/getAllContas HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+### Teste de buscar contas por ID
+POST http://localhost:40000/getContasByID HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "ID": 7
+}
+
+### Teste de atualização de contas
+POST http://localhost:40000/updateContas HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "ID": 7,
+    "Descricao": "Serviço de banho e tosa",
+    "DataLancamento": "2023-01-01",
+    "Valor": 100.00,
+    "Status": "Pendente",
+    "Removido": false
+}
+
+### Teste de exclusão (soft delete) de contas
+POST http://localhost:40000/deleteContas HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "ID": 7
+}
