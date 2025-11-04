@@ -1,107 +1,108 @@
 const db = require("../../../database/databaseconfig");
 
-
-const getAllFuncionarios = async () => {
-    return (
-        await db.query(
-            "SELECT ID, Nome, Cargo, DataContratacao, Salario " +
-            "FROM Funcionario WHERE Removido = FALSE ORDER BY ID ASC"
-        )
-    ).rows;
+const GetAllFuncionarios = async () => {
+  return (
+    await db.query(
+      "SELECT ID, Nome, Username, Cargo, DataContratacao, Salario " +
+      "FROM Funcionario WHERE Removido = FALSE ORDER BY Nome ASC"
+    )
+  ).rows;
 };
 
-
-const getFuncionarioByID = async (funcionarioID) => {
-    return (
-        await db.query(
-            "SELECT ID, Nome, Cargo, DataContratacao, Salario " +
-            "FROM Funcionario WHERE ID = $1 AND Removido = FALSE",
-            [funcionarioID]
-        )
-    ).rows;
+const GetFuncionarioByID = async (funcionarioIDPar) => {
+  return (
+    await db.query(
+      "SELECT ID, Nome, Username, Cargo, DataContratacao, Salario " +
+      "FROM Funcionario WHERE ID = $1 AND Removido = FALSE ORDER BY Nome ASC",
+      [funcionarioIDPar]
+    )
+  ).rows;
 };
 
+const InsertFuncionario = async (funcionarioREGPar) => {
+  let linhasAfetadas;
+  let msg = "ok";
+  try {
+    linhasAfetadas = (
+      await db.query(
+        "INSERT INTO Funcionario " +
+        "VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, FALSE)",
+        [
+          funcionarioREGPar.nome,
+          funcionarioREGPar.username,
+          funcionarioREGPar.senha,
+          funcionarioREGPar.cargo,
+          funcionarioREGPar.datacontratacao,
+          funcionarioREGPar.salario
+        ]
+      )
+    ).rowCount;
+  } catch (error) {
+    msg = "[mdlFuncionario|InsertFuncionario] " + error.detail;
+    linhasAfetadas = -1;
+  }
 
-const insertFuncionario = async (funcionarioREG) => {
-    let linhasAfetadas;
-    let msg = "ok";
-
-    try {
-        linhasAfetadas = (
-            await db.query(
-                "INSERT INTO Funcionario " +
-                "VALUES (DEFAULT, $1, $2, $3, $4, FALSE)",
-                [
-                    funcionarioREG.nome,
-                    funcionarioREG.cargo,
-                    funcionarioREG.datacontratacao,
-                    funcionarioREG.salario
-                ]
-            )
-        ).rowCount;
-    } catch (error) {
-        msg = "[mdlFuncionario|insertFuncionario] " + error.detail;
-        linhasAfetadas = -1;
-    }
-
-    return { msg, linhasAfetadas };
+  return { msg, linhasAfetadas };
 };
 
+const UpdateFuncionario = async (funcionarioREGPar) => {
+  let linhasAfetadas;
+  let msg = "ok";
+  try {
+    linhasAfetadas = (
+      await db.query(
+        "UPDATE Funcionario SET " +
+        "Nome = $2, " +
+        "Username = $3, " +
+        "Senha = $4, " +
+        "Cargo = $5, " +
+        "DataContratacao = $6, " +
+        "Salario = $7 " +
+        "WHERE ID = $1",
+        [
+          funcionarioREGPar.id,
+          funcionarioREGPar.nome,
+          funcionarioREGPar.username,
+          funcionarioREGPar.senha,
+          funcionarioREGPar.cargo,
+          funcionarioREGPar.datacontratacao,
+          funcionarioREGPar.salario
+        ]
+      )
+    ).rowCount;
+  } catch (error) {
+    msg = "[mdlFuncionario|UpdateFuncionario] " + error.detail;
+    linhasAfetadas = -1;
+  }
 
-const updateFuncionario = async (funcionarioREG) => {
-    let linhasAfetadas;
-    let msg = "ok";
-
-    try {
-        linhasAfetadas = (
-            await db.query(
-                "UPDATE Funcionario SET " +
-                "Nome = $2, " +
-                "Cargo = $3, " +
-                "DataContratacao = $4, " +
-                "Salario = $5 " +
-                "WHERE ID = $1 AND Removido = FALSE",
-                [
-                    funcionarioREG.id,
-                    funcionarioREG.nome,
-                    funcionarioREG.cargo,
-                    funcionarioREG.datacontratacao,
-                    funcionarioREG.salario
-                ]
-            )
-        ).rowCount;
-    } catch (error) {
-        msg = "[mdlFuncionario|updateFuncionario] " + error.detail;
-        linhasAfetadas = -1;
-    }
-
-    return { msg, linhasAfetadas };
+  return { msg, linhasAfetadas };
 };
 
+const DeleteFuncionario = async (funcionarioREGPar) => {
+  let linhasAfetadas;
+  let msg = "ok";
+  try {
+    linhasAfetadas = (
+      await db.query(
+        "UPDATE Funcionario SET " +
+        "Removido = TRUE " +
+        "WHERE ID = $1",
+        [funcionarioREGPar.id]
+      )
+    ).rowCount;
+  } catch (error) {
+    msg = "[mdlFuncionario|DeleteFuncionario] " + error.detail;
+    linhasAfetadas = -1;
+  }
 
-const deleteFuncionario = async (funcionarioREG) => {
-    let linhasAfetadas;
-    let msg = "ok";
-
-    try {
-        linhasAfetadas = (
-            await db.query(
-                "UPDATE Funcionario SET Removido = TRUE WHERE ID = $1",
-                [funcionarioREG.id]
-            )
-        ).rowCount;
-    } catch (error) {
-        msg = "[mdlFuncionario|deleteFuncionario] " + error.detail;
-        linhasAfetadas = -1;
-    }
-
-    return { msg, linhasAfetadas };
+  return { msg, linhasAfetadas };
 };
 
 module.exports = {
-    getAllFuncionarios,
-    getFuncionarioByID,
-    insertFuncionario,
-    updateFuncionario,
-    deleteFuncionario,
+  GetAllFuncionarios,
+  GetFuncionarioByID,
+  InsertFuncionario,
+  UpdateFuncionario,
+  DeleteFuncionario
 };
+
