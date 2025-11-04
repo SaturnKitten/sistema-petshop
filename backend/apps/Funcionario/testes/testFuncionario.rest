@@ -5,8 +5,8 @@ POST http://localhost:40000/Login HTTP/1.1
 content-type: application/json
 
 {    
-    "Username": "admin",
-    "Password": "admin"
+    "username": "admin",
+    "password": "admin"
 }
 ### Seta o token
 @accessToken = {{loginAutenticado.response.body.$.token}}
@@ -20,14 +20,14 @@ content-type: application/json
 Authorization: Bearer {{accessToken}}
 
 {    
-    "ID": 0,
-    "Nome": "Carlos Matias",
-    "Username": "carlos.matias",
-    "Password": "carlos123",
-    "Cargo": "Desenvolvedor",
-    "Datacontratacao": "2022-01-01",
-    "Salario": 4500.00,
-    "Deleted": false
+    "id": 0,
+    "nome": "Carlos Matias",
+    "username": "carlos.matias",
+    "password": crypt('admin', gen_salt('bf')),
+    "cargo": "Desenvolvedor",
+    "datacontratacao": "2022-01-01",
+    "salario": 4500.00,
+    "deleted": false
 }
 
 ### teste de buscar todos os funcionários

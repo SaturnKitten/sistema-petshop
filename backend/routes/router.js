@@ -31,10 +31,10 @@ routerApp.post("/DeleteFuncionario", appLogin.AutenticaJWT, appFuncionario.Delet
 
 //Rotas de Recebimentos
 routerApp.get("/GetAllRecebimentos", appLogin.AutenticaJWT, appRecebimento.GetAllRecebimentos);
-routerApp.post("/GetRecebimentoByID", appLogin.AutenticaJWT, appRecebimento.GetRecebimentosByID);
-routerApp.post("/InsertRecebimento", appLogin.AutenticaJWT, appRecebimento.InsertRecebimentos);
-routerApp.post("/UpdateRecebimento", appLogin.AutenticaJWT, appRecebimento.UpdateRecebimentos);
-routerApp.post("/DeleteRecebimento", appLogin.AutenticaJWT, appRecebimento.DeleteRecebimentos);
+routerApp.post("/GetRecebimentosByID", appLogin.AutenticaJWT, appRecebimento.GetRecebimentosByID);
+routerApp.post("/InsertRecebimentos", appLogin.AutenticaJWT, appRecebimento.InsertRecebimentos);
+routerApp.post("/UpdateRecebimentos", appLogin.AutenticaJWT, appRecebimento.UpdateRecebimentos);
+routerApp.post("/DeleteRecebimentos", appLogin.AutenticaJWT, appRecebimento.DeleteRecebimentos);
 
 // Rota Login
 routerApp.post("/Login", appLogin.Login);
