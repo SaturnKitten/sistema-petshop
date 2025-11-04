@@ -1,36 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+require('dotenv').config();
 
-// Importar rotas
-const clienteRoutes = require('./routes/cliente.routes');
-const animalRoutes = require('./routes/animal.routes');
-const contaReceberRoutes = require('./routes/contaReceber.routes');
-const recebimentoRoutes = require('./routes/recebimento.routes');
-const funcionarioRoutes = require('./routes/funcionario.routes');
-
-// Middleware de erro
-const errorHandler = require('./middlewares/error.middleware');
-
+const router = require('./routes/router');
+ 
 const app = express();
+const port = 40000;
 
-// Middlewares globais
-app.use(cors());
-app.use(bodyParser.json()); // Para ler JSON do corpo das requisições
+app.use(bodyParser.urlencoded({ extended: false, }));
+app.use(express.json());
 
-// Rotas do sistema
-app.use('/clientes', clienteRoutes);
-app.use('/animais', animalRoutes);
-app.use('/contasReceber', contaReceberRoutes);
-app.use('/recebimentos', recebimentoRoutes);
-app.use('/funcionarios', funcionarioRoutes);
+//@ Utiliza o routerApp configurado em ./routes/route.js
+app.use(router);
 
-// Rota de teste
-app.get('/', (req, res) => {
-  res.json({ success: true, message: 'API do Sistema Petshop rodando!' });
-});
 
-// Middleware de erro (sempre por último)
-app.use(errorHandler);
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`App listening at port ${port}`)
+})
