@@ -1,63 +1,43 @@
 const mdlRecebimento = require("../model/mdlRecebimento");
 
-const getAllRecebimentos = (req, res) =>
+const GetAllRecebimentos = (req, res) =>
   (async () => {
-    try {
-      const registro = await mdlRecebimento.getAllRecebimentos();
-      res.json({ status: "ok", registro });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    let registro = await mdlRecebimento.GetAllRecebimentos();
+    res.json({ status: "ok", registro: registro });
   })();
 
-const getRecebimentoByID = (req, res) =>
+const GetRecebimentoByID = (req, res) =>
   (async () => {
-    try {
-      const recebimentoID = parseInt(req.body.recebimentoid);
-      const registro = await mdlRecebimento.getRecebimentoByID(recebimentoID);
-      res.json({ status: "ok", registro });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const recebimentoID = parseInt(req.body.id);
+    let registro = await mdlRecebimento.GetRecebimentoByID(recebimentoID);
+    res.json({ status: "ok", registro: registro });
   })();
 
-const insertRecebimentos = (req, res) =>
+const InsertRecebimentos = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlRecebimento.insertRecebimento(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlRecebimento.InsertRecebimentos(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-const updateRecebimentos = (req, res) =>
+const UpdateRecebimentos = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlRecebimento.updateRecebimento(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlRecebimento.UpdateRecebimentos(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-const deleteRecebimentos = (req, res) =>
+const DeleteRecebimentos = (request, res) =>
   (async () => {
-    try {
-      const registro = req.body;
-      const { msg, linhasAfetadas } = await mdlRecebimento.deleteRecebimento(registro);
-      res.json({ status: msg, linhasAfetadas });
-    } catch (error) {
-      res.status(500).json({ status: "error", error: error.message });
-    }
+    const registro = request.body;
+    let { msg, linhasAfetadas } = await mdlRecebimento.DeleteRecebimentos(registro);
+    res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
 module.exports = {
-  getAllRecebimentos,
-  getRecebimentoByID,
-  insertRecebimentos,
-  updateRecebimentos,
-  deleteRecebimentos,
+  GetAllRecebimentos,
+  GetRecebimentoByID,
+  InsertRecebimentos,
+  UpdateRecebimentos,
+  DeleteRecebimentos
 };
