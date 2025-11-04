@@ -1,0 +1,76 @@
+### Necessário para pegar o token
+### Post
+# @name loginAutenticado
+POST http://localhost:40000/Login HTTP/1.1
+content-type: application/json
+
+{    
+    "Username": "admin",
+    "Password": "admin"
+}
+### Seta o token
+@accessToken = {{loginAutenticado.response.body.$.token}}
+@username = {{loginAutenticado.response.body.$.username}}
+
+
+
+### teste de inserção de funcionário
+POST http://localhost:40000/InsertFuncionario HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{    
+    "ID": 0,
+    "Nome": "Carlos Matias",
+    "Username": "carlos.matias",
+    "Password": "carlos123",
+    "Cargo": "Desenvolvedor",
+    "Datacontratacao": "2022-01-01",
+    "Salario": 4500.00,
+    "Deleted": false
+}
+
+### teste de buscar todos os funcionários
+GET http://localhost:40000/GetAllFuncionarios HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{    
+    
+}
+
+### teste de buscar funcionário por ID
+POST http://localhost:40000/GetFuncionarioByID HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{    
+    "ID": 1
+}
+
+
+
+### teste de atualização de funcionário
+POST http://localhost:40000/UpdateFuncionario HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{    
+    "ID": 1,
+    "Nome": "José das Neves",
+    "Username": "xJosé das Neves",
+    "Password": "jose123",
+    "Cargo": "Analista de Sistemas",
+    "DataContratacao": "1999-12-12",
+    "Salario": 5500.00,
+    "Removido": false
+}
+
+### teste de exclusão de funcionário
+POST http://localhost:40000/DeleteFuncionario HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{    
+    "ID": 55  
+}

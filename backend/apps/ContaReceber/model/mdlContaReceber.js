@@ -1,6 +1,6 @@
 const db = require("../../../database/databaseconfig");
 
-const getAllContas = async () => {
+const GetAllContas = async () => {
     return (
         await db.query(
             "SELECT ID, Descricao, DataLancamento, Valor, Status " + 
@@ -9,7 +9,7 @@ const getAllContas = async () => {
     ).rows;
 };
 
-const getContaByID = async (contaIDPar) => {
+const GetContasByID = async (contaIDPar) => {
     return (
         await db.query(
             "SELECT ID, Descricao, DataLancamento, Valor, Status " +
@@ -19,7 +19,7 @@ const getContaByID = async (contaIDPar) => {
     ).rows;
 };
 
-const insertContas = async (registroPar) => {
+const InsertContas = async (registroPar) => {
     let linhasAfetadas;
     let msg = "ok";
     try {
@@ -42,7 +42,7 @@ const insertContas = async (registroPar) => {
     return { msg, linhasAfetadas };
 };
 
-const updateContas = async (registroPar) => {
+const UpdateContas = async (registroPar) => {
     let linhasAfetadas;
     let msg = "ok";
     try {
@@ -70,7 +70,7 @@ const updateContas = async (registroPar) => {
     return { msg, linhasAfetadas };
 };
 
-const deleteContas = async (registroPar) => {
+const DeleteContas = async (registroPar) => {
     let linhasAfetadas;
     let msg = "ok";
     try {
@@ -88,11 +88,11 @@ const deleteContas = async (registroPar) => {
 };
 
 module.exports = {
-    getAllContas,
-    getContaByID,
-    insertContas,
-    updateContas,
-    deleteContas
+    GetAllContas,
+    GetContasByID,
+    InsertContas,
+    UpdateContas,
+    DeleteContas
 };
 
    

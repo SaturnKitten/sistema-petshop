@@ -1,0 +1,63 @@
+### Necessário para pegar o token
+### Post
+# @name loginAutenticado
+POST http://localhost:40000/Login HTTP/1.1
+content-type: application/json
+
+{
+    "Username": "admin",
+    "Password": "admin"
+}
+### Seta o token
+@accessToken = {{loginAutenticado.response.body.$.token}}
+
+### Teste de inserção de cliente
+POST http://localhost:40000/InsertClientes HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "clienteid": 0,
+    "codigo": "CLI04",
+    "nome": "Ana Carolina",
+    "endereco": "Rua das Flores, 123",
+    "ativo": true,
+    "deleted": false
+}
+
+### Teste de buscar todos os clientes
+GET http://localhost:40000/getAllClientes HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+### Teste de buscar cliente por ID
+POST http://localhost:40000/getClienteByID HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "clienteid": 7
+}
+
+### Teste de atualização de cliente
+POST http://localhost:40000/updateClientes HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "clienteid": 7,
+    "codigo": "CLI01-Xt",
+    "nome": "João da Silva Santos",
+    "endereco": "Rua A1, Centro",
+    "ativo": true,
+    "deleted": false
+}
+
+### Teste de exclusão (soft delete) de cliente
+POST http://localhost:40000/deleteClientes HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+    "clienteid": 7
+}

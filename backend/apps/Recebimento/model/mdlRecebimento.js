@@ -9,7 +9,7 @@ const GetAllRecebimentos = async () => {
   ).rows;
 };
 
-const GetRecebimentoByID = async (recebimentoIDPar) => {
+const GetRecebimentosByID = async (recebimentoIDPar) => {
   return (
     await db.query(
       "SELECT ID, Descricao, ID_ContaReceber, DataRecebimento, ValorRecebido, MetodoPagamento " +
@@ -98,7 +98,7 @@ const DeleteRecebimentos = async (recebimentoREGPar) => {
 
 module.exports = {
   GetAllRecebimentos,
-  GetRecebimentoByID,
+  GetRecebimentosByID,
   InsertRecebimentos,
   UpdateRecebimentos,
   DeleteRecebimentos

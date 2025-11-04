@@ -1,33 +1,33 @@
 const mdlContaReceber = require("../model/mdlContaReceber");
 
-const getAllContas = (req, res) =>
+const GetAllContas = (req, res) =>
   (async () => {
     let registro = await mdlContaReceber.getAllContas();
     res.json({ status: "ok", registro: registro });
   })();
 
-const getContasByID = (req, res) =>
+const GetContasByID = (req, res) =>
   (async () => {
     const contaID = parseInt(req.body.ID);
     let registro = await mdlContaReceber.getContaByID(contaID);
     res.json({ status: "ok", registro: registro });
   })();
 
-const insertContas = (request, res) =>
+const InsertContas = (request, res) =>
   (async () => {
     const contaREG = request.body;
     let { msg, linhasAfetadas } = await mdlContaReceber.insertContas(contaREG);
     res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-const updateContas = (request, res) =>
+const UpdateContas = (request, res) =>
   (async () => {
     const contaREG = request.body;
     let { msg, linhasAfetadas } = await mdlContaReceber.updateContas(contaREG);
     res.json({ status: msg, linhasAfetadas: linhasAfetadas });
   })();
 
-const deleteContas = (request, res) =>
+const DeleteContas = (request, res) =>
   (async () => {
     const contaREG = request.body;
     let { msg, linhasAfetadas } = await mdlContaReceber.deleteContas(contaREG);
@@ -35,10 +35,9 @@ const deleteContas = (request, res) =>
   })();
 
 module.exports = {
-  getAllContas,
-  getContasByID,
-  insertContas,
-  updateContas,
-  deleteContas
+  GetAllContas,
+  GetContasByID,
+  InsertContas,
+  UpdateContas,
+  DeleteContas
 };
-
