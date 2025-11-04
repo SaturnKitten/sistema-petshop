@@ -9,7 +9,7 @@ const getAllContas = async () => {
     ).rows;
 };
 
-const getContasByID = async (contaIDPar) => {
+const getContaByID = async (contaIDPar) => {
     return (
         await db.query(
             "SELECT ID, Descricao, DataLancamento, Valor, Status " +
@@ -89,6 +89,12 @@ const deleteContas = async (registroPar) => {
 
 module.exports = {
     getAllContas,
+    getContaByID,
+    insertContas,
+    updateContas,
+    deleteContas
+};
+
     getContasByID,
     insertContas,
     updateContas,
