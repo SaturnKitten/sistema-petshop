@@ -1,19 +1,88 @@
- <!-- Arquivo views/alunos/view_manutencao.vash-->
- @html.extend('layout',function(model){
+@html.extend('layout',function(model){
  
- @html.block('content',function(model){
+@html.block('content',function(model){
  
  <main>
  
-  <divclass="container-fluid px-4">
- <h1class="mt-4">@model.title</h1>
-<olclass="breadcrumb mb-4">
- 11 <liclass="breadcrumb-item active">@model.title</li>
- 12 </ol>
- 13 <divclass="row">
- 14 <divclass="col-xl-12">
- 15 <div class="card mb-4">
- 16 <div class="col-2 ms-1mt-1 mb-2">
- 17
- 18 <buttontype="button" class="btnbtn-primary"
- 19 onclick="window.location.href= '/alunos/insertAlunos'">
+     <div class="container-fluid px-4">
+         <h1 class="mt-4">@model.title</h1>
+         <ol class="breadcrumb mb-4">
+             <li class="breadcrumb-item active">@model.title</li>
+         </ol>
+         <div class="row">
+             <div class="col-xl-12">
+                 <div class="card mb-4">
+                     <div class="col-2 ms-1mt-1 mb-2">
+
+                         <buttontype="button" class="btnbtn-primary"
+                             onclick="window.location.href= '/funcionario/insertFuncionario'">
+ 
+Novofuncionario</button>
+                       </div>
+                       <div class="card-header">
+                         <iclass="fas fa-tableme-1"></i>
+                        Listagemde funcionarios
+                       </div>
+ 
+                       <div class="card-body">
+                         <table id="example" class="stripe"style="width:100%">
+                             <thead>
+                                 <tr>
+                                   <th>Nome</th>
+                                   <th>Cargo</th>
+                                   <th>DataContratacao</th>
+                                   <th>Salario</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 @model.data.registro.forEach(function(registro){
+                                 <tr>
+                                    <td><a href="/funcionario/viewFuncionario/@registro.
+funcionarioid/v" class="btn btn-info btn-sm"><i
+                                            class="fa fa-magnifying-glass"></i>
+Visualizar</a></td>
+                                    <td>@registro.nome</td>
+                                    <td>@registro.cargo</td>
+                                    <td>@registro.dataContratacao</td>
+                                    <td>@registro.salario</td>
+                                </tr>
+                                })
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                   <th>Nome</th>
+                                   <th>Cargo</th>
+                                   <th>DataContratacao</th>
+                                   <th>Salario</th>
+                               </tr>
+                           </tfoot>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+</main>
+ 
+ })
+
+  })
+
+ <script>
+     var table = new DataTable('#example', {
+         dom: 'B<"top"fi>rt<"bottom"lp><"clear">',
+         columnDefs: [
+             {
+                 targets: 3,
+                 render: DataTable.render.datetime('DD/MM/YYYY')
+             }
+         ],
+ 
+         buttons:[
+             'copy','csv', 'pdf'
+         ],
+    });
+    table.buttons().container()
+        .appendTo($('.col-sm-12:eq(0)',table.table().container()));
+  </script>
+
