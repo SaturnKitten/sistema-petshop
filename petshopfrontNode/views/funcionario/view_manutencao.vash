@@ -1,0 +1,19 @@
+ <!-- Arquivo views/alunos/view_manutencao.vash-->
+ @html.extend('layout',function(model){
+ 
+ @html.block('content',function(model){
+ 
+ <main>
+ 
+  <divclass="container-fluid px-4">
+ <h1class="mt-4">@model.title</h1>
+<olclass="breadcrumb mb-4">
+ 11 <liclass="breadcrumb-item active">@model.title</li>
+ 12 </ol>
+ 13 <divclass="row">
+ 14 <divclass="col-xl-12">
+ 15 <div class="card mb-4">
+ 16 <div class="col-2 ms-1mt-1 mb-2">
+ 17
+ 18 <buttontype="button" class="btnbtn-primary"
+ 19 onclick="window.location.href= '/alunos/insertAlunos'">
