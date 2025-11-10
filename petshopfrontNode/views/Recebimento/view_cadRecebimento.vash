@@ -1,4 +1,4 @@
-<!-- Arquivo views/recebimentos/view_cadRecebimentos.vash -->
+<!-- Arquivo views/recebimento/view_cadRecebimento.vash -->
 @html.extend('layout',function(model){
 
   @html.block('content',function(model){
@@ -87,18 +87,18 @@
 
             @if(model.oper=="v") {
               <button type="button" class="btn btn-warning me-2 mb-3"
-                      onclick="window.open('/recebimentos/viewRecebimentos/'+ $('#id').val()+ '/vu','_self')">Alterar</button>
+                      onclick="window.open('/recebimento/viewRecebimento/'+ $('#id').val()+ '/vu','_self')">Alterar</button>
             }
 
             @if(model.oper=="v") {
               <button type="" class="btn btn-danger mb-3"
-                      onclick="deleteRecebimentos()">Remover</button>
+                      onclick="deleteRecebimento()">Remover</button>
             }
 
           </div>
 
           <button type="button" class="btn btn-primary"
-                  onclick="window.location.href = '/recebimentos'">
+                  onclick="window.location.href = '/recebimento'">
             Fechar sem salvar
           </button>
 
@@ -127,7 +127,7 @@ $('#form').on('submit',function (){
 });
 
 async function alteraRegistro(){
-  resp = await axios.post("/recebimentos/viewRecebimentos", {
+  resp = await axios.post("/recebimento/viewRecebimento", {
     id: $("#id").val(),
     descricao: $("#descricao").val(),
     id_contareceber: $("#id_contareceber").val(),
@@ -147,8 +147,8 @@ async function alteraRegistro(){
   }
 }
 
-async function deleteRecebimentos(){
-  resp = await axios.post("/recebimentos/DeleteRecebimentos", {
+async function deleteRecebimento(){
+  resp = await axios.post("/recebimento/DeleteRecebimento", {
     id: $("#id").val(),
   },{
     headers:{
@@ -158,7 +158,7 @@ async function deleteRecebimentos(){
 
   if(resp.data.status =="ok") {
     alert("Recebimento removido com sucesso!");
-    window.open("/recebimentos","_self");
+    window.open("/recebimento","_self");
   }else {
     alert("Houve erro ao remover o recebimento!");
   }
@@ -173,3 +173,5 @@ async function testeFormData(){
 
   })
 })
+
+
