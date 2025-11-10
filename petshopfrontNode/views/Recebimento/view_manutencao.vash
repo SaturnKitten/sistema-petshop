@@ -1,0 +1,89 @@
+@html.extend('layout',function(model){
+ 
+@html.block('content',function(model){
+ 
+ <main>
+ 
+     <div class="container-fluid px-4">
+         <h1 class="mt-4">@model.title</h1>
+         <ol class="breadcrumb mb-4">
+             <li class="breadcrumb-item active">@model.title</li>
+         </ol>
+         <div class="row">
+             <div class="col-xl-12">
+                 <div class="card mb-4">
+                     <div class="col-2 ms-1mt-1 mb-2">
+
+                         <buttontype="button" class="btnbtn-primary"
+                             onclick="window.location.href= '/recebimento/Insertrecebimento'">
+ 
+Novo Recebimento</button>
+                       </div>
+                       <div class="card-header">
+                         <iclass="fas fa-tableme-1"></i>
+                        Listagem de recebimentos
+                       </div>
+ 
+                       <div class="card-body">
+                         <table id="example" class="stripe"style="width:100%">
+                             <thead>
+                                 <tr>
+                                   <th>Descricao</th>
+                                   <th>ID_ContaReceber</th>
+                                   <th>DataRecebimento</th>
+                                   <th>ValorRecebido</th>
+                                   <th>MetodoPagamento</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 @model.data.registro.forEach(function(registro){
+                                 <tr>
+                                    <td><a href="/funcionario/viewFuncionario/@registro.recebimentoid/v" class="btn btn-info btn-sm"><i
+                                            class="fa fa-magnifying-glass"></i>
+Visualizar</a></td>
+                                    <td>@registro.desricao</td>
+                                    <td>@registro.id_contareceber</td>
+                                    <td>@registro.datarecebimento</td>
+                                    <td>@registro.valorrecebido</td>
+                                    <td>@registro.metodopagamento</td>
+                                </tr>
+                                })
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                   <th>Descricao</th>
+                                   <th>ID_ContaReceber</th>
+                                   <th>DataRecebimento</th>
+                                   <th>ValorRecebido</th>
+                                   <th>MetodoPagamento</th>
+                               </tr>
+                           </tfoot>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+</main>
+ 
+ })
+
+  })
+
+ <script>
+     var table = new DataTable('#example', {
+         dom: 'B<"top"fi>rt<"bottom"lp><"clear">',
+         columnDefs: [
+             {
+                 targets: 3,
+                 render: DataTable.render.datetime('DD/MM/YYYY')
+             }
+         ],
+ 
+         buttons:[
+             'copy','csv', 'pdf'
+         ],
+    });
+    table.buttons().container()
+        .appendTo($('.col-sm-12:eq(0)',table.table().container()));
+  </script>

@@ -59,7 +59,50 @@
         </main>
     })
 
-})
+                         <button type="button" class="btn btn-primary" onclick="window.location.href= '/funcionario/insertFuncionario'">Novo funcionario</button>
+                       </div>
+                       <div class="card-header">
+                         <i class="fas fa-table me-1"></i>Listagem de funcionarios
+                       </div>
+ 
+                       <div class="card-body">
+                         <table id="example" class="stripe"style="width:100%">
+                             <thead>
+                                 <tr>
+                                   <th>Nome</th>
+                                   <th>Cargo</th>
+                                   <th>Data Contratacao</th>
+                                   <th>Salario</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 @model.data.registro.forEach(function(registro){
+                                 <tr>
+                                    <td><a href="/funcionario/viewFuncionario/@registro.funcionarioid/v" class="btn btn-info btn-sm"><i class="fa fa-magnifying-glass"></i>Visualizar</a></td>
+                                    <td>@registro.nome</td>
+                                    <td>@registro.cargo</td>
+                                    <td>@registro.dataContratacao</td>
+                                    <td>@registro.salario</td>
+                                </tr>
+                                })
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                   <th>Nome</th>
+                                   <th>Cargo</th>
+                                   <th>DataContratacao</th>
+                                   <th>Salario</th>
+                               </tr>
+                           </tfoot>
+                         </table>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+</main>
+ 
+ })
 
 <script>
     var table = new DataTable('#example', {

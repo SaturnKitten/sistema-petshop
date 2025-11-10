@@ -15,7 +15,6 @@ var funcionarioRouter = require('./routes/rte_funcionarios');
 var contareceberRouter = require('./routes/rte_contareceber');
 var recebimentoRouter = require('./routes/rte_recebimento');
 
-
 var app = express();
 
 // view engine setup
