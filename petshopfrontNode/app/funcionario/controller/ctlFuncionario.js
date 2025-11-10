@@ -1,229 +1,200 @@
+
 const axios = require("axios");
 const moment = require("moment");
 
-const manutFuncionarios = async (req, res) =>
-  (async () => {
 
-    const userName = req.session.userName;
-    const token = req.session.token;
-
-    const resp = await axios.get(process.env.SERVIDOR_DW3Back + "/GetAllFuncionarios", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      }
-    }).catch(error => {
-      let remoteMSG;
-      if (error.code === "ECONNREFUSED") {
-        remoteMSG = "Servidor indisponível";
-      } else if (error.code === "ERR_BAD_REQUEST") {
-        remoteMSG = "Usuário não autenticado";
-      } else {
-        remoteMSG = error.message;
-      }
-      res.render("funcionario/view/vwManutFuncionario.njk", {
-        title: "Manutenção de Funcionários",
-        data: null,
-        erro: remoteMSG,
-        userName: userName,
-      });
-    });
-
-    if (!resp) {
-      return;
-    }
-
-    res.render("funcionario/view/vwManutFuncionario.njk", {
-      title: "Manutenção de Funcionários",
-      data: resp.data.registro,
-      erro: null,
-      userName: userName,
-    });
-  })();
-
-const insertFuncionario = async (req, res) =>
-  (async () => {
-    if (req.method == "GET") {
-      const token = req.session.token;
-      return res.render("funcionario/view/vwFCrFuncionario.njk", {
-        title: "Cadastro de Funcionário",
-        data: null,
-        erro: null,
-        userName: req.session.userName,
-      });
-    } else {
-      //@ POST
-      const regData = req.body;
-      const token = req.session.token;
-
-      try {
-        const response = await axios.post(process.env.SERVIDOR_DW3Back + "/InsertFuncionario", regData, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          timeout: 5000,
-        });
-
-        res.json({
-          status: response.data.status,
-          msg: response.data.status,
-          data: response.data,
-          erro: null,
-        });
-      } catch (error) {
-        console.error('[ctlFuncionario|insertFuncionario] Erro ao inserir funcionário:', error.message);
-        res.json({
-          status: "Error",
-          msg: error.message,
-          data: null,
-          erro: null,
-        });
-      }
-    }
-  })();
-
-const ViewFuncionario = async (req, res) =>
-  (async () => {
-    const userName = req.session.userName;
-    const token = req.session.token;
+const getAllFuncionario = (req, res) =>
+(async () => {
+    userName = req.session.userName;
     try {
-      if (req.method == "GET") {
-        const id = req.params.id;
-        parseInt(id);
+        resp = await axios.get(process.env.SERVIDOR_DW3 + "/getAllFuncionario", {});
+        res.render("funcionarios/view_manutencao", {
+            title: "Manutenção de funcionários",
+            data: resp.data,
+            userName: userName,
+        });
+    } catch (erro) {
+        console.log("[ctlFuncionario|getAllFuncionario] Erro de requisição:", erro);
+    }
+})();
 
-        const response = await axios.post(
-          process.env.SERVIDOR_DW3Back + "/GetFuncionarioByID",
-          { id: id },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          }
+
+function validateForm(regFormPar) {
+    if (regFormPar.DataContratacao === "") {
+        regFormPar.DataContratacao = null;
+    }
+    return regFormPar;
+}
+
+
+const insertFuncionario = (req, res) =>
+(async () => {
+    var oper = "";
+    var registro = {};
+    userName = req.session.userName;
+    token = req.session.token;
+    try {
+        if (req.method == "GET") {
+            oper = "c";
+            registro = {
+                ID: 0,
+                Nome: "",
+                Cargo: "",
+                DataContratacao: "",
+                Salario: "0.00",
+                Removido: false,
+            };
+            res.render("funcionarios/view_cadFuncionario", {
+                title: "Cadastro de funcionário",
+                data: registro,
+                oper: oper,
+                userName: userName,
+            });
+        } else {
+            oper = "c";
+            const funcionarioREG = validateForm(req.body);
+            resp = await axios.post(
+                process.env.SERVIDOR_DW3 + "/insertFuncionario",
+                {
+                    ID: 0,
+                    Nome: funcionarioREG.Nome,
+                    Cargo: funcionarioREG.Cargo,
+                    DataContratacao: funcionarioREG.DataContratacao,
+                    Salario: funcionarioREG.Salario,
+                    Removido: false,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                }
+            );
+
+            if (resp.data.status == "ok") {
+                registro = {
+                    ID: 0,
+                    Nome: "",
+                    Cargo: "",
+                    DataContratacao: "",
+                    Salario: "0.00",
+                    Removido: false,
+                };
+            } else {
+                registro = funcionarioREG;
+            }
+
+            oper = "c";
+            res.render("funcionarios/view_cadFuncionario", {
+                title: "Cadastro de funcionário",
+                data: registro,
+                oper: oper,
+                userName: userName,
+            });
+        }
+    } catch (erro) {
+        console.log("[ctlFuncionario|insertFuncionario] Erro não identificado:", erro);
+    }
+})();
+
+//@ Abre o formulário para edição de funcionário
+const viewFuncionario = (req, res) =>
+(async () => {
+    var oper = "";
+    var registro = {};
+    userName = req.session.userName;
+    token = req.session.token;
+    try {
+        if (req.method == "GET") {
+            const id = req.params.id;
+            oper = req.params.oper;
+            resp = await axios.post(
+                process.env.SERVIDOR_DW3 + "/getFuncionarioByID",
+                { ID: id },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                }
+            );
+
+            if (resp.data.status == "ok") {
+                registro = resp.data.registro[0];
+                registro.DataContratacao = moment(registro.DataContratacao).format("YYYY-MM-DD");
+
+                res.render("funcionarios/view_cadFuncionario", {
+                    title: "Cadastro de funcionário",
+                    data: registro,
+                    oper: oper,
+                    userName: userName,
+                });
+            }
+        } else {
+            oper = "vu";
+            const funcionarioREG = validateForm(req.body);
+            const id = parseInt(funcionarioREG.ID);
+            resp = await axios.post(
+                process.env.SERVIDOR_DW3 + "/updateFuncionario",
+                {
+                    ID: id,
+                    Nome: funcionarioREG.Nome,
+                    Cargo: funcionarioREG.Cargo,
+                    DataContratacao: funcionarioREG.DataContratacao,
+                    Salario: funcionarioREG.Salario,
+                    Removido: false,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: "Bearer " + token,
+                    },
+                }
+            );
+
+            if (resp.data.status == "ok") {
+                res.json({ status: "ok" });
+            } else {
+                res.json({ status: "erro" });
+            }
+        }
+    } catch (erro) {
+        res.json({ status: "[ctlFuncionario|viewFuncionario] Funcionário não pode ser alterado" });
+        console.log("[ctlFuncionario|viewFuncionario] Erro:", erro);
+    }
+})();
+
+
+const DeleteFuncionario = (req, res) =>
+(async () => {
+    userName = req.session.userName;
+    token = req.session.token;
+    try {
+        const id = parseInt(req.body.id);
+        resp = await axios.post(
+            process.env.SERVIDOR_DW3 + "/DeleteFuncionario",
+            { ID: id },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+            }
         );
 
-        if (response.data.status == "ok") {
-          response.data.registro[0].datacontratacao = moment(response.data.registro[0].datacontratacao).format("YYYY-MM-DD");
-
-          res.render("funcionario/view/vwFRUDrFuncionario.njk", {
-            title: "Visualização de Funcionário",
-            data: response.data.registro[0],
-            disabled: true,
-            userName: userName,
-          });
+        if (resp.data.status == "ok") {
+            res.json({ status: "ok" });
         } else {
-          console.log("[ctlFuncionario|ViewFuncionario] ID não localizado!");
+            res.json({ status: "erro" });
         }
-      }
     } catch (erro) {
-      res.json({ status: "[ctlFuncionario|ViewFuncionario] Funcionário não localizado!" });
-      console.log("[ctlFuncionario|ViewFuncionario] Erro não identificado", erro);
+        console.log("[ctlFuncionario|DeleteFuncionario] Erro:", erro);
     }
-  })();
-
-const UpdateFuncionario = async (req, res) =>
-  (async () => {
-    const userName = req.session.userName;
-    const token = req.session.token;
-    try {
-      if (req.method == "GET") {
-        const id = req.params.id;
-        parseInt(id);
-
-        const response = await axios.post(
-          process.env.SERVIDOR_DW3Back + "/GetFuncionarioByID",
-          { id: id },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            },
-          }
-        );
-
-        if (response.data.status == "ok") {
-          response.data.registro[0].datacontratacao = moment(response.data.registro[0].datacontratacao).format("YYYY-MM-DD");
-
-          res.render("funcionario/view/vwFRUDrFuncionario.njk", {
-            title: "Atualização de Funcionário",
-            data: response.data.registro[0],
-            disabled: false,
-            userName: userName,
-          });
-        } else {
-          console.log("[ctlFuncionario|UpdateFuncionario] Dados não localizados");
-        }
-      } else {
-        const regData = req.body;
-        const token = req.session.token;
-
-        try {
-          const response = await axios.post(process.env.SERVIDOR_DW3Back + "/UpdateFuncionario", regData, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            timeout: 5000,
-          });
-
-          res.json({
-            status: response.data.status,
-            msg: response.data.status,
-            data: response.data,
-            erro: null,
-          });
-        } catch (error) {
-          console.error('[ctlFuncionario|UpdateFuncionario] Erro ao atualizar funcionário:', error.message);
-          res.json({
-            status: "Error",
-            msg: error.message,
-            data: null,
-            erro: null,
-          });
-        }
-      }
-    } catch (erro) {
-      res.json({ status: "[ctlFuncionario|UpdateFuncionario] Funcionário não localizado!" });
-      console.log("[ctlFuncionario|UpdateFuncionario] Erro não identificado", erro);
-    }
-  })();
-
-const DeleteFuncionario = async (req, res) =>
-  (async () => {
-    const regData = req.body;
-    const token = req.session.token;
-
-    try {
-      const response = await axios.post(process.env.SERVIDOR_DW3Back + "/DeleteFuncionario", regData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        timeout: 5000,
-      });
-
-      res.json({
-        status: response.data.status,
-        msg: response.data.status,
-        data: response.data,
-        erro: null,
-      });
-    } catch (error) {
-      console.error('[ctlFuncionario|DeleteFuncionario] Erro ao deletar funcionário:', error.message);
-      res.json({
-        status: "Error",
-        msg: error.message,
-        data: null,
-        erro: null,
-      });
-    }
-  })();
+})();
 
 module.exports = {
-  manutFuncionarios,
-  insertFuncionario,
-  ViewFuncionario,
-  UpdateFuncionario,
-  DeleteFuncionario
+    GetAllFuncionario,
+    ViewFuncionario,
+    InsertFuncionario,
+    DeleteFuncionario,
 };
