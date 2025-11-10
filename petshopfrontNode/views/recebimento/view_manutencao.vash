@@ -17,8 +17,8 @@
                          <button type="button" class="btn btn-primary" onclick="window.location.href= '/recebimento/Insertrecebimento'">Novo Recebimento</button>
                        </div>
                        <div class="card-header">
-                         <i class="fas fa-table me-1"></i>
-                        Listagem de recebimentos
+                            <i class="fas fa-table me-1"></i>
+                            Listagem de recebimentos
                        </div>
  
                        <div class="card-body">
