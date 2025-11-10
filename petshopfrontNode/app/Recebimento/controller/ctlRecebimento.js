@@ -1,16 +1,16 @@
-
+//Arquivo app/recebimentos/controller/ctlRecebimento.js
 
 const axios = require("axios");
 const moment = require("moment");
 
-
+//@ Abre o formulário de manutenção de recebimentos
 const getAllRecebimento = (req, res) =>
 (async () => {
     userName = req.session.userName;
     try {
         resp = await axios.get(process.env.SERVIDOR_DW3 + "/getAllRecebimento", {});
-        res.render("recebimentos/view_manutencao", {
-            title: "Manutenção de recebimentos",
+        res.render("recebimento/view_manutencao", {
+            title: "Manutenção de recebimento",
             data: resp.data,
             userName: userName,
         });
@@ -19,7 +19,7 @@ const getAllRecebimento = (req, res) =>
     }
 })();
 
-
+//@ Função para validar campos no formulário
 function validateForm(regFormPar) {
     if (regFormPar.DataRecebimento === "") {
         regFormPar.DataRecebimento = null;
@@ -27,7 +27,7 @@ function validateForm(regFormPar) {
     return regFormPar;
 }
 
-
+//@ Insere novo recebimento
 const insertRecebimento = (req, res) =>
 (async () => {
     var oper = "";
@@ -48,7 +48,7 @@ const insertRecebimento = (req, res) =>
                 MetodoPagamento: "",
                 Removido: false,
             };
-            res.render("recebimentos/view_cadRecebimento", {
+            res.render("recebimento/view_cadRecebimento", {
                 title: "Cadastro de recebimento",
                 data: registro,
                 conta: contas.data.registro,
@@ -93,7 +93,7 @@ const insertRecebimento = (req, res) =>
 
             contas = await axios.get(process.env.SERVIDOR_DW3 + "/getAllContaReceber", {});
             oper = "c";
-            res.render("recebimentos/view_cadRecebimento", {
+            res.render("recebimento/view_cadRecebimento", {
                 title: "Cadastro de recebimento",
                 data: registro,
                 conta: contas.data.registro,
@@ -106,7 +106,7 @@ const insertRecebimento = (req, res) =>
     }
 })();
 
-
+//@ Abre o formulário para edição de recebimento
 const viewRecebimento = (req, res) =>
 (async () => {
     var oper = "";
@@ -133,7 +133,7 @@ const viewRecebimento = (req, res) =>
                 registro = resp.data.registro[0];
                 registro.DataRecebimento = moment(registro.DataRecebimento).format("YYYY-MM-DD");
                 contas = await axios.get(process.env.SERVIDOR_DW3 + "/getAllContaReceber", {});
-                res.render("recebimentos/view_cadRecebimento", {
+                res.render("recebimento/view_cadRecebimento", {
                     title: "Cadastro de recebimento",
                     data: registro,
                     conta: contas.data.registro,
