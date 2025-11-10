@@ -11,6 +11,7 @@ const session = require('express-session');
 require('dotenv').config();
 
 var indexRouter = require('./routes/index');
+var funcionarioRouter = require('./routes/rte_funcionarios');
 
 
 var app = express();
@@ -36,7 +37,7 @@ cookie: { maxAge: null },
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-
+app.use('/funcionario', funcionarioRouter);
 
 
 
