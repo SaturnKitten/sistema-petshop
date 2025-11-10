@@ -14,11 +14,14 @@
                  <div class="card mb-4">
                      <div class="col-2 ms-1mt-1 mb-2">
 
-                         <button type="button" class="btn btn-primary" onclick="window.location.href= '/recebimento/Insertrecebimento'">Novo Recebimento</button>
+                         <buttontype="button" class="btnbtn-primary"
+                             onclick="window.location.href= '/recebimento/Insertrecebimento'">
+ 
+Novo Recebimento</button>
                        </div>
                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Listagem de recebimentos
+                         <iclass="fas fa-tableme-1"></i>
+                        Listagem de recebimentos
                        </div>
  
                        <div class="card-body">
@@ -35,8 +38,10 @@
                              <tbody>
                                  @model.data.registro.forEach(function(registro){
                                  <tr>
-                                    <td><a href="/recebimento/viewRecebimento/@registro.recebimentoid/v" class="btn btn-info btn-sm"><i class="fa fa-magnifying-glass"></i>Visualizar</a></td>
-                                    <td>@registro.descricao</td>
+                                    <td><a href="/funcionario/viewFuncionario/@registro.recebimentoid/v" class="btn btn-info btn-sm"><i
+                                            class="fa fa-magnifying-glass"></i>
+Visualizar</a></td>
+                                    <td>@registro.desricao</td>
                                     <td>@registro.id_contareceber</td>
                                     <td>@registro.datarecebimento</td>
                                     <td>@registro.valorrecebido</td>
