@@ -12,7 +12,7 @@ require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var funcionarioRouter = require('./routes/rte_funcionarios');
-
+var recebimentoRouter = require('./routes/rte_recebimento');
 
 var app = express();
 
@@ -38,6 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/funcionario', funcionarioRouter);
+app.use('/recebimento', recebimentoRouter);
 
 
 
