@@ -100,11 +100,11 @@ $(function () {
 })
 
 $('#form').on('submit',function (){
-  if($('#datarecebimento').val() =="") {
-    alert("Informe a data de recebimento");
+  if($('#DataLancamento').val() =="") {
+    alert("Informe a data de lançamento");
     return false;
   }else {
-    $('#valorrecebido').val($('#valorrecebido').maskMoney('unmasked')[0]);
+    $('#Valor').val($('#Valor').maskMoney('unmasked')[0]);
     return true;
   }
 });
@@ -114,15 +114,15 @@ async function alteraRegistro(){
   resp = await axios.post("/contareceber/viewContaReceber", {
     id: $("#id").val(),
     descricao: $("#descricao").val(),
-    id_contareceber: $("#id_contareceber").val(),
-    valorrecebido: $('#valorrecebido').maskMoney('unmasked')[0],
-    metodopagamento: $("#metodopagamento").val(),
-    datarecebimento: $("#datarecebimento").val(),
+    Valor: $('#Valor').maskMoney('unmasked')[0],
+    Status: $("#Status").val(),
+    DataLancamento: $("#DataLancamento").val(),
   },{
     headers:{
       'Content-Type':'application/json',
     }
   });
+
 
   if(resp.data.status =="ok") {
     alert("Conta a receber alterada com sucesso!");
@@ -157,4 +157,3 @@ async function testeFormData(){
 
   })
 })
-
