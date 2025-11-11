@@ -1,7 +1,7 @@
-<!-- Arquivo views/recebimento/view_cadRecebimento.vash -->
-@html.extend('layout',function(model){
+<!-- Arquivo views/contareceber/view_cadContaReceber.vash -->
+@html.extend('layout', function(model) {
 
-  @html.block('content',function(model){
+  @html.block('content', function(model) {
 
 <main>
 
@@ -15,74 +15,77 @@
   <div class="row">
     <div class="col-xl-12">
 
-      <div class="card-header">
-      </div>
+      <div class="card-header"></div>
 
       <div class="card-body">
         <div class="col-xl-5">
           <form id="form">
 
             <div class="mb-1" style="display:none">
-              <input type="text" name="id" value="@model.data.recebimentoid" class="form-control" id="id">
+              <input type="text" name="id" value="@model.data.id" class="form-control" id="id">
             </div>
 
             <div class="mb-1">
               <label for="descricao" class="form-label">Descrição</label>
-              <input type="text" name="descricao" value="@model.data.descricao" class="form-control" id="descricao" @(model.oper=='v' ? 'disabled' : '')>
+              <input type="text" name="descricao" value="@model.data.descricao"
+                     class="form-control" id="descricao"
+                     @(model.oper=='v' ? 'disabled' : '')>
             </div>
 
             <div class="mb-1">
-              <label for="id_contareceber" class="form-label">Conta a Receber</label>
-              <select class="form-select" aria-label="Default select example" id="id_contareceber" name="id_contareceber" @(model.oper=='v' ? 'disabled' : '')>
-                @model.contaReceber.forEach(function(item){
-                  @if(model.data.id_contareceber === item.id){
-                    <option value="@item.id" selected>@item.descricao</option>
-                  }
-                  else {
-                    <option value="@item.id">@item.descricao</option>
-                  }
-                });
+              <label for="valor" class="form-label">Valor (R$)</label>
+              <input type="text" name="valor" value="@model.data.valor"
+                     class="form-control" id="valor"
+                     data-thousands="." data-decimal=","
+                     @(model.oper=='v' ? 'disabled' : '')>
+            </div>
+
+            <div class="mb-1">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" id="status" name="status" @(model.oper=='v' ? 'disabled' : '')>
+                <option value="PENDENTE" @(model.data.status === 'PENDENTE' ? 'selected' : '')>PENDENTE</option>
+                <option value="PAGO" @(model.data.status === 'PAGO' ? 'selected' : '')>PAGO</option>
+                <option value="CANCELADO" @(model.data.status === 'CANCELADO' ? 'selected' : '')>CANCELADO</option>
               </select>
             </div>
 
-            <div class="mb-1">
-              <label for="valorrecebido" class="form-label">Valor Recebido</label>
-              <input type="text" name="valorrecebido" value="@model.data.valorrecebido" class="form-control" id="valorrecebido" data-thousands="." data-decimal="," @(model.oper=='v' ? 'disabled' : '')>
-            </div>
-
-            <div class="mb-1">
-              <label for="metodopagamento" class="form-label">Método de Pagamento</label>
-              <input type="text" name="metodopagamento" value="@model.data.metodopagamento" class="form-control" id="metodopagamento" @(model.oper=='v' ? 'disabled' : '')>
-            </div>
-
             <div class="mb-4">
-              <label for="datarecebimento" class="form-label">Data de Recebimento<span style="color:red;">*</span></label>
-              <input type="date" name="datarecebimento" value="@model.data.datarecebimento" class="form-control" id="datarecebimento" @(model.oper=='v' ? 'disabled' : '')>
+              <label for="datalancamento" class="form-label">Data de Lançamento <span style="color:red;">*</span></label>
+              <input type="date" name="datalancamento" value="@model.data.datalancamento"
+                     class="form-control" id="datalancamento"
+                     @(model.oper=='v' ? 'disabled' : '')>
             </div>
 
             @if(model.oper=="c") {
-              <button type="submit" class="btn btn-success me-2" onclick="" formmethod="POST">Salvar</button>
+              <button type="submit" class="btn btn-success me-2"
+                      onclick=""
+                      formmethod="POST">Salvar</button>
             }
 
           </form>
           <div>
 
             @if(model.oper=="vu") {
-              <button type="button" class="btn btn-warning me-2 mb-3" onclick="alteraRegistro()">Salvar Alteração</button>
+              <button type="button" class="btn btn-warning me-2 mb-3"
+                      onclick="alteraRegistro()">Salvar Alteração</button>
             }
 
             @if(model.oper=="v") {
-              <button type="button" class="btn btn-warning me-2 mb-3" onclick="window.open('/contareceber/viewContaReceber/'+ $('#id').val()+ '/vu','_self')">Alterar</button>
+              <button type="button" class="btn btn-warning me-2 mb-3"
+                      onclick="window.open('/contareceber/viewContaReceber/'+ $('#id').val()+ '/vu','_self')">Alterar</button>
             }
 
             @if(model.oper=="v") {
-              <button type="" class="btn btn-danger mb-3"
+              <button type="button" class="btn btn-danger mb-3"
                       onclick="deleteContaReceber()">Remover</button>
             }
 
           </div>
 
-          <button type="button" class="btn btn-primary" onclick="window.location.href = '/contareceber'">Fechar sem salvar</button>
+          <button type="button" class="btn btn-primary"
+                  onclick="window.location.href = '/contareceber'">
+            Fechar sem salvar
+          </button>
 
         </div>
       </div>
@@ -94,35 +97,32 @@
 
 <script>
 
-//Essa parte precisa alterar as variaveis
 $(function () {
-  $('#valorrecebido').maskMoney();
+  $('#valor').maskMoney();
 })
 
 $('#form').on('submit',function (){
-  if($('#DataLancamento').val() =="") {
+  if($('#datalancamento').val() =="") {
     alert("Informe a data de lançamento");
     return false;
   }else {
-    $('#Valor').val($('#Valor').maskMoney('unmasked')[0]);
+    $('#valor').val($('#valor').maskMoney('unmasked')[0]);
     return true;
   }
 });
 
-//Essa parte precisa alterar as variaveis
 async function alteraRegistro(){
   resp = await axios.post("/contareceber/viewContaReceber", {
     id: $("#id").val(),
     descricao: $("#descricao").val(),
-    Valor: $('#Valor').maskMoney('unmasked')[0],
-    Status: $("#Status").val(),
-    DataLancamento: $("#DataLancamento").val(),
+    valor: $('#valor').maskMoney('unmasked')[0],
+    status: $("#status").val(),
+    datalancamento: $("#datalancamento").val(),
   },{
     headers:{
       'Content-Type':'application/json',
     }
   });
-
 
   if(resp.data.status =="ok") {
     alert("Conta a receber alterada com sucesso!");
