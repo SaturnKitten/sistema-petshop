@@ -1,84 +1,96 @@
+<!-- Arquivo views/contareceber/view_manutencao.vash -->
 @html.extend('layout',function(model){
- 
-@html.block('content',function(model){
- 
- <main>
- 
-     <div class="container-fluid px-4">
-         <h1 class="mt-4">@model.title</h1>
-         <ol class="breadcrumb mb-4">
-             <li class="breadcrumb-item active">@model.title</li>
-         </ol>
-         <div class="row">
-             <div class="col-xl-12">
-                 <div class="card mb-4">
-                     <div class="col-2 ms-1mt-1 mb-2">
 
-                         <button type="button" class="btnbtn-primary" onclick="window.location.href= '/contareceber/Insertcontareceber'">Nova Conta a Receber</button>
-                       </div>
-                       <div class="card-header">
-                         <i class="fas fa-table me-1"></i>
-                        Listagem de contas a receber
-                       </div>
-                        //Precisa alterar para conta a receber
-                       <div class="card-body">
-                         <table id="example" class="stripe"style="width:100%">
-                             <thead>
-                                 <tr>
-                                   <th>Descricao</th>
-                                   <th>ID_ContaReceber</th>
-                                   <th>DataRecebimento</th>
-                                   <th>ValorRecebido</th>
-                                   <th>MetodoPagamento</th>
-                                 </tr>
-                             </thead>
-                             <tbody>
-                                 @model.data.registro.forEach(function(registro){
-                                 <tr>
-                                    <td><a href="/contareceber/viewContaReceber/@registro.contareceberid/v" class="btn btn-info btn-sm"><i class="fa fa-magnifying-glass"></i>Visualizar</a></td>
-                                    <td>@registro.desricao</td>
-                                    <td>@registro.id_contareceber</td>
-                                    <td>@registro.datarecebimento</td>
-                                    <td>@registro.valorrecebido</td>
-                                    <td>@registro.metodopagamento</td>
-                                </tr>
-                                })
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                   <th>Descricao</th>
-                                   <th>ID_ContaReceber</th>
-                                   <th>DataRecebimento</th>
-                                   <th>ValorRecebido</th>
-                                   <th>MetodoPagamento</th>
-                               </tr>
-                           </tfoot>
-                         </table>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
+  @html.block('content',function(model){
+
+<main>
+
+  <div class="container-fluid px-4">
+    <h1 class="mt-4">@model.title</h1>
+    <ol class="breadcrumb mb-4">
+      <li class="breadcrumb-item active">@model.title</li>
+    </ol>
+
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card mb-4">
+
+          <div class="col-2 ms-1 mt-1 mb-2">
+            <button type="button" class="btn btn-primary"
+                    onclick="window.location.href= '/contareceber/InsertContaReceber'">
+              Nova Conta a Receber
+            </button>
+          </div>
+
+          <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Listagem de Contas a Receber
+          </div>
+
+          <div class="card-body">
+            <table id="example" class="stripe" style="width:100%">
+              <thead>
+                <tr>
+                  <th>Ações</th>
+                  <th>Descrição</th>
+                  <th>Data de Lançamento</th>
+                  <th>Valor (R$)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @model.data.registro.forEach(function(registro){
+                  <tr>
+                    <td>
+                      <a href="/contareceber/viewContaReceber/@registro.id/v"
+                         class="btn btn-info btn-sm">
+                        <i class="fa fa-magnifying-glass"></i> Visualizar
+                      </a>
+                    </td>
+                    <td>@registro.descricao</td>
+                    <td>@registro.datalancamento</td>
+                    <td>@registro.valor</td>
+                    <td>@registro.status</td>
+                  </tr>
+                })
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Ações</th>
+                  <th>Descrição</th>
+                  <th>Data de Lançamento</th>
+                  <th>Valor (R$)</th>
+                  <th>Status</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
- 
- })
 
   })
+})
 
- <script>
-     var table = new DataTable('#example', {
-         dom: 'B<"top"fi>rt<"bottom"lp><"clear">',
-         columnDefs: [
-             {
-                 targets: 3,
-                 render: DataTable.render.datetime('DD/MM/YYYY')
-             }
-         ],
- 
-         buttons:[
-             'copy','csv', 'pdf'
-         ],
-    });
-    table.buttons().container()
-        .appendTo($('.col-sm-12:eq(0)',table.table().container()));
-  </script>
+<script>
+  var table = new DataTable('#example', {
+    dom: 'B<"top"fi>rt<"bottom"lp><"clear">',
+    columnDefs: [
+      {
+        targets: 2,
+        render: DataTable.render.datetime('DD/MM/YYYY')
+      }
+    ],
+    buttons: [
+      'copy', 'csv', 'pdf'
+    ],
+  });
+
+  table.buttons().container()
+    .appendTo($('.col-sm-12:eq(0)', table.table().container()));
+</script>
+
