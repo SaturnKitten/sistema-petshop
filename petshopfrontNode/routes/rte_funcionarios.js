@@ -1,5 +1,5 @@
 var express = require('express');
-var alunosApp = require("../app/funcionario/controller/ctlFuncionario")
+var funcionarioApp = require("../app/funcionario/controller/ctlFuncionario")
 var router = express.Router();
 
 //Função necessária para evitar que usuários não autenticados acessem o sistema.
@@ -21,7 +21,7 @@ router.get('/ViewFuncionarios/:id/:oper', authenticationMiddleware, funcionarioA
 
 /* POST métodos */
 router.post('/InsertFuncionario', authenticationMiddleware, funcionarioApp.insertFuncionario);
-router.post('/DeleteFuncionario', authenticationMiddleware, funcionarioApp.deleteFuncionario);
+router.post('/DeleteFuncionario', authenticationMiddleware, funcionarioApp.DeleteFuncionario);
 router.post('/ViewFuncionario', authenticationMiddleware, funcionarioApp.viewFuncionario);
 
 module.exports = router;

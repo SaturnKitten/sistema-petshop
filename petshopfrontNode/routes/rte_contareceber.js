@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var alunosApp = require("../apps/contareceber/controller/ctlContaReceber");
+var contareceberApp = require("../app/contareceber/controller/ctlContaReceber");
 
 
 
@@ -16,14 +16,14 @@ function authenticationMiddleware(req, res, next) {
 }; 
   
 /* GET métodos */
-router.get('/ManutContaReceber', authenticationMiddleware, alunosApp.manutContaReceber);
-router.get('/InsertContaReceber', authenticationMiddleware, alunosApp.insertContaReceber);
-router.get('/ViewContaReceber/:id', authenticationMiddleware, alunosApp.ViewContaReceber);
-router.get('/UpdateContaReceber/:id', authenticationMiddleware, alunosApp.UpdateContaReceber);
+router.get('/ManutContaReceber', authenticationMiddleware, contareceberApp.manutContaReceber);
+router.get('/InsertContaReceber', authenticationMiddleware, contareceberApp.insertContaReceber);
+router.get('/ViewContaReceber/:id', authenticationMiddleware, contareceberApp.ViewContaReceber);
+router.get('/UpdateContaReceber/:id', authenticationMiddleware, contareceberApp.UpdateContaReceber);
 
 /* POST métodos */
-router.post('/InsertContaReceber', authenticationMiddleware, alunosApp.insertContaReceber);
-router.post('/UpdateContaReceber', authenticationMiddleware, alunosApp.UpdateContaReceber);
-router.post('/DeleteContaReceber', authenticationMiddleware, alunosApp.DeleteContaReceber);
+router.post('/InsertContaReceber', authenticationMiddleware, contareceberApp.insertContaReceber);
+router.post('/UpdateContaReceber', authenticationMiddleware, contareceberApp.UpdateContaReceber);
+router.post('/DeleteContaReceber', authenticationMiddleware, contareceberApp.DeleteContaReceber);
 
 module.exports = router;
