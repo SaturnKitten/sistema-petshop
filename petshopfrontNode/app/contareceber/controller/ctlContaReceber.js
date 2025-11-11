@@ -21,7 +21,7 @@ const manutContaReceber = async (req, res) =>
       } else {
         remoteMSG = error.message;
       }
-      res.render("app/views/contareceber/view_manutencao.vash", {
+      res.render("contareceber/view_manutencao.vash", {
         title: "Manutenção de Contas a Receber",
         data: null,
         erro: remoteMSG,
@@ -33,7 +33,7 @@ const manutContaReceber = async (req, res) =>
       return;
     }
 
-    res.render("app/views/contareceber/view_manutencao.vash", {
+    res.render("contareceber/view_manutencao.vash", {
       title: "Manutenção de Contas a Receber",
       data: resp.data.registro,
       erro: null,
@@ -45,7 +45,7 @@ const insertContaReceber = async (req, res) =>
   (async () => {
     if (req.method == "GET") {
       const token = req.session.token;
-      return res.render("app/views/contareceber/view_cadContaReceber.vash", {
+      return res.render("contareceber/view_cadContaReceber.vash", {
         title: "Cadastro de Conta a Receber",
         data: null,
         erro: null,

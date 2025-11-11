@@ -11,9 +11,9 @@
                     <div class="card-body">
                         <h4 class="card-title" style="text-align: center;">Login</h4>
                         <form class="form-login" action="Login" method="POST">
-                            <label for="labelusername" class="form-label mt-4">Informe seu usuário</label>
+                            <label for="labelusername" class="form-label mt-4">Usuário:</label>
                             <input type="text" name="username" class="form-control"/><br/>
-                            <label for="labelpassword" class="form-label mt-2">Informe seu password</label>
+                            <label for="labelpassword" class="form-label mt-2">Senha:</label>
                             <input type="password" name="password" class="form-control"/><br/>
                             <div class="text-center">
                                 <input class="btn btn-primary mt-4 mx-auto" type="submit" value="Login"/>
