@@ -195,12 +195,3 @@ module.exports = {
     insertFuncionario,
     DeleteFuncionario,
 };
-
-})();
-
-module.exports = {
-    getAllFuncionario,
-    viewFuncionario,
-    insertFuncionario,
-    DeleteFuncionario,
-};
